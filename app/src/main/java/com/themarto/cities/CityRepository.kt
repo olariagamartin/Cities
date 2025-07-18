@@ -2,5 +2,5 @@ package com.themarto.cities
 
 interface CityRepository {
 
-    suspend fun getCities(): List<City>
+    suspend fun getCities(): Result<List<City>>
 }

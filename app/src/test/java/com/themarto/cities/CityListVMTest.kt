@@ -3,15 +3,12 @@ package com.themarto.cities
 import app.cash.turbine.test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.coroutines.yield
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -23,9 +20,9 @@ class CityListVMTest {
     private val testDispatcher = StandardTestDispatcher()
 
     private val cityRepository = object : CityRepository {
-        override suspend fun getCities(): List<City> {
+        override suspend fun getCities(): Result<List<City>> {
             delay(1000) // simulate network delay
-            return provideCityList()
+            return Result.Success(provideCityList())
         }
     }
 
@@ -57,6 +54,22 @@ class CityListVMTest {
             awaitItem() // initial emit
             advanceUntilIdle()
             assertEquals(provideCityList(), awaitItem().cities)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `A2_WHEN getCities respond error THEN display error`() = runTest {
+        val viewModel = CityListViewModel(object : CityRepository {
+            override suspend fun getCities(): Result<List<City>> {
+                return Result.Error("error")
+            }
+        })
+
+        viewModel.uiState.test {
+            awaitItem() // initial emit
+            advanceUntilIdle()
+            assertEquals("error", awaitItem().error)
             cancelAndIgnoreRemainingEvents()
         }
     }

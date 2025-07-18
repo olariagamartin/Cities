@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 data class CityListUIState(
-    val cities: List<City> = emptyList()
+    val cities: List<City> = emptyList(),
+    val error: String? = null
 )
 
 class CityListViewModel(
@@ -20,7 +21,12 @@ class CityListViewModel(
 
     init {
         viewModelScope.launch {
-            _uiState.value = CityListUIState(cityRepository.getCities())
+            val result = cityRepository.getCities()
+            if (result is Result.Success) {
+                _uiState.value = CityListUIState(cities = result.data)
+            } else if (result is Result.Error) {
+                _uiState.value = CityListUIState(error = result.error)
+            }
         }
     }
 
