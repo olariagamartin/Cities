@@ -31,8 +31,8 @@ class CityListVMTest {
     fun `A0_WHEN ViewModel is initialized THEN cities are empty`() = runTest {
         val vm = CityListViewModel()
 
-        vm.cities.test {
-            assertEquals(emptyList<City>(), awaitItem())
+        vm.uiState.test {
+            assertEquals(emptyList<City>(), awaitItem().cities)
             cancelAndIgnoreRemainingEvents()
         }
 

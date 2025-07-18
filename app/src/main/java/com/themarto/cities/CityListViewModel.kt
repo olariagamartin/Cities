@@ -5,9 +5,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+data class CityListUIState(
+    val cities: List<City> = emptyList()
+)
+
 class CityListViewModel : ViewModel() {
 
-    private val _cities = MutableStateFlow<List<City>>(emptyList())
-    val cities: StateFlow<List<City>> = _cities.asStateFlow()
+    private val _uiState = MutableStateFlow(CityListUIState())
+    val uiState: StateFlow<CityListUIState> = _uiState.asStateFlow()
 
 }
