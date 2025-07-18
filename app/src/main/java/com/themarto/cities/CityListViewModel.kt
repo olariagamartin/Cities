@@ -20,11 +20,15 @@ class CityListViewModel(
     val uiState: StateFlow<CityListUIState> = _uiState.asStateFlow()
 
     init {
+        loadCities()
+    }
+
+    private fun loadCities() {
         viewModelScope.launch {
             val result = cityRepository.getCities()
-            if (result is Result.Success) {
+            if (result.isSuccess()) {
                 _uiState.value = CityListUIState(cities = result.data)
-            } else if (result is Result.Error) {
+            } else if (result.isError()) {
                 _uiState.value = CityListUIState(error = result.error)
             }
         }
