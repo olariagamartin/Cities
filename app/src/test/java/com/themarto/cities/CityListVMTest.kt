@@ -3,7 +3,6 @@ package com.themarto.cities
 import app.cash.turbine.test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -19,19 +18,9 @@ class CityListVMTest {
 
     private val testDispatcher = StandardTestDispatcher()
 
-    private val cityRepository = object : CityRepository {
-        override suspend fun getCities(): Result<List<City>> {
-            delay(1000) // simulate network delay
-            return Result.Success(provideCityList())
-        }
-    }
-
-    private lateinit var vm: CityListViewModel
-
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        vm = CityListViewModel(cityRepository)
     }
 
     @After
@@ -41,6 +30,7 @@ class CityListVMTest {
 
     @Test
     fun `A0_WHEN ViewModel is initialized THEN cities are empty`() = runTest {
+        val vm = CityListViewModel(provideCityRepository())
         vm.uiState.test {
             assertEquals(emptyList<City>(), awaitItem().cities)
             cancelAndIgnoreRemainingEvents()
@@ -50,6 +40,7 @@ class CityListVMTest {
 
     @Test
     fun `A1_WHEN cities are retrieved THEN they are displayed`() = runTest {
+        val vm = CityListViewModel(provideCityRepository())
         vm.uiState.test {
             awaitItem() // initial emit
             advanceUntilIdle()
@@ -60,17 +51,25 @@ class CityListVMTest {
 
     @Test
     fun `A2_WHEN getCities respond error THEN display error`() = runTest {
-        val viewModel = CityListViewModel(object : CityRepository {
-            override suspend fun getCities(): Result<List<City>> {
-                return Result.Error("error")
-            }
-        })
+        val viewModel = CityListViewModel(
+            provideCityRepository { Result.Error("error") }
+        )
 
         viewModel.uiState.test {
             awaitItem() // initial emit
             advanceUntilIdle()
             assertEquals("error", awaitItem().error)
             cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    private fun provideCityRepository(
+        getCities: suspend () -> Result<List<City>> = { Result.Success(provideCityList()) }
+    ): CityRepository {
+        return object : CityRepository {
+            override suspend fun getCities(): Result<List<City>> {
+                return getCities()
+            }
         }
     }
 
