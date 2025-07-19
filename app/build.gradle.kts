@@ -43,6 +43,7 @@ dependencies {
 
     // app
     implementation(project(":core:domain"))
+    implementation(project(":core:data"))
 
     // android
     implementation(libs.androidx.core.ktx)
@@ -57,11 +58,6 @@ dependencies {
     // koin
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
-
-    // retrofit
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.moshi.converter)
-    implementation(libs.moshi)
 
     // test
     testImplementation(libs.junit)

@@ -2,6 +2,9 @@ package com.themarto.cities
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.themarto.core.data.repository.CityRepository
+import com.themarto.core.data.utils.isError
+import com.themarto.core.data.utils.isSuccess
 import com.themarto.core.domain.City
 import com.themarto.core.domain.Coordinates
 import kotlinx.coroutines.flow.MutableStateFlow

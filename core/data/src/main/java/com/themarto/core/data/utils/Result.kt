@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalContracts::class)
 
-package com.themarto.cities
+package com.themarto.core.data.utils
 
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract

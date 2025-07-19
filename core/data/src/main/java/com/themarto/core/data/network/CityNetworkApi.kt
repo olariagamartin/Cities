@@ -1,4 +1,4 @@
-package com.themarto.cities
+package com.themarto.core.data.network
 
 import com.themarto.core.domain.City
 import retrofit2.http.GET

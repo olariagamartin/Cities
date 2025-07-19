@@ -34,4 +34,15 @@ android {
 
 dependencies {
 
+    // app
+    implementation(project(":core:domain"))
+
+    // retrofit
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.moshi.converter)
+    implementation(libs.moshi)
+
+    // koin
+    implementation(libs.koin.android)
+
 }
