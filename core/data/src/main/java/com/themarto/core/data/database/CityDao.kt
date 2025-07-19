@@ -13,5 +13,11 @@ interface CityDao {
     @Query("SELECT * FROM cities ORDER BY name, country")
     suspend fun getAll(): List<DBCity>
 
+    @Query("""
+        SELECT * FROM cities
+        WHERE name LIKE :name || '%' COLLATE NOCASE
+        ORDER BY name, country
+    """)
+    suspend fun getByName(name: String): List<DBCity>
 
 }

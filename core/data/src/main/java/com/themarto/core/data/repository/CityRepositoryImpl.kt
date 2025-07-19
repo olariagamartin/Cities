@@ -29,8 +29,7 @@ class CityRepositoryImpl(
     }
 
     override suspend fun getCitiesFiltered(prefix: String): Result<List<City>> {
-        // todo: implement this
-        val dbResult = cityDao.getAll().filter { it.name.startsWith(prefix) }
+        val dbResult = cityDao.getByName(prefix)
         return Result.Success(dbResult.map { it.toDomain() })
     }
 }
