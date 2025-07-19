@@ -1,5 +1,7 @@
 package com.themarto.cities
 
+import com.themarto.core.domain.City
+
 class CityRepositoryImpl(
     private val cityApi: CityNetworkApi
 ) : CityRepository {

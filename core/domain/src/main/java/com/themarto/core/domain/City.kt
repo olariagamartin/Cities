@@ -1,4 +1,4 @@
-package com.themarto.cities
+package com.themarto.core.domain
 
 import com.squareup.moshi.Json
 

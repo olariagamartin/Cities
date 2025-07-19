@@ -1,5 +1,6 @@
 package com.themarto.cities
 
+import com.themarto.core.domain.City
 import retrofit2.http.GET
 import retrofit2.http.Url
 

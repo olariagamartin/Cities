@@ -41,6 +41,10 @@ android {
 
 dependencies {
 
+    // app
+    implementation(project(":core:domain"))
+
+    // android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -49,6 +53,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
     // koin
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
@@ -58,6 +63,7 @@ dependencies {
     implementation(libs.retrofit.moshi.converter)
     implementation(libs.moshi)
 
+    // test
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
