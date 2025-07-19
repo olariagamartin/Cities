@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.themarto.core.data"
+    namespace = "com.themarto.core.domain"
     compileSdk = 35
 
     defaultConfig {
