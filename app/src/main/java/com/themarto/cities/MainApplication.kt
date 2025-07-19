@@ -12,7 +12,8 @@ class MainApplication : Application() {
             androidContext(this@MainApplication)
             modules(
                 viewModelModule,
-                repositoryModule
+                repositoryModule,
+                networkModule
             )
         }
 
