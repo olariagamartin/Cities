@@ -34,6 +34,4 @@ android {
 
 dependencies {
 
-    implementation(libs.moshi)
-
 }
