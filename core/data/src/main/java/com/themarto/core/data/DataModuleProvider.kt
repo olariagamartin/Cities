@@ -1,5 +1,6 @@
 package com.themarto.core.data
 
+import com.themarto.core.data.database.CityDatabase
 import com.themarto.core.data.network.CityNetworkApi
 import com.themarto.core.data.network.createRetrofit
 import com.themarto.core.data.repository.CityRepository
@@ -17,7 +18,10 @@ object DataModuleProvider {
 
 private val repositoryModule = module {
     single<CityRepository> {
-        CityRepositoryImpl(get<Retrofit>().create(CityNetworkApi::class.java))
+        CityRepositoryImpl(
+            cityApi = get<Retrofit>().create(CityNetworkApi::class.java),
+            cityDao = CityDatabase.getInstance(get()).cityDao,
+        )
     }
 }
 
