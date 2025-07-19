@@ -44,6 +44,7 @@ dependencies {
     // app
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
+    implementation(project(":features:city-list"))
 
     // android
     implementation(libs.androidx.core.ktx)
@@ -57,13 +58,7 @@ dependencies {
 
     // koin
     implementation(libs.koin.android)
-    implementation(libs.koin.androidx.compose)
 
-    // test
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.turbine)
-    testImplementation(libs.mockito)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

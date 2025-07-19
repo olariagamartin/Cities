@@ -1,4 +1,4 @@
-package com.themarto.cities
+package com.themarto.features.cityList
 
 import app.cash.turbine.test
 import com.themarto.core.data.repository.CityRepository
