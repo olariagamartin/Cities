@@ -27,4 +27,10 @@ class CityRepositoryImpl(
         Log.d("CityRepository", "DB is not empty")
         return Result.Success(dbResult.map { it.toDomain() })
     }
+
+    override suspend fun getCitiesFiltered(prefix: String): Result<List<City>> {
+        // todo: implement this
+        val dbResult = cityDao.getAll().filter { it.name.startsWith(prefix) }
+        return Result.Success(dbResult.map { it.toDomain() })
+    }
 }

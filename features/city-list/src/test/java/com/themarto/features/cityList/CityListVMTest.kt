@@ -16,6 +16,8 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.spy
+import org.mockito.kotlin.verify
 
 @ExperimentalCoroutinesApi
 class CityListVMTest {
@@ -67,6 +69,20 @@ class CityListVMTest {
         }
     }
 
+    @Test
+    fun `A3_WHEN filterByPrefix is called THEN getCities with prefix is called`() = runTest {
+        val cityRepoMock = spy(provideCityRepository())
+        val vm = CityListViewModel(cityRepoMock)
+
+        advanceUntilIdle()
+
+        vm.filterByPrefix("prefix")
+
+        advanceUntilIdle()
+
+        verify(cityRepoMock).getCitiesFiltered("prefix")
+    }
+
     // ------ Test help methods ----------
     private fun provideCityRepository(
         getCities: suspend () -> Result<List<City>> = { Result.Success(provideCityList()) }
@@ -74,6 +90,10 @@ class CityListVMTest {
         return object : CityRepository {
             override suspend fun getCities(): Result<List<City>> {
                 return getCities()
+            }
+
+            override suspend fun getCitiesFiltered(prefix: String): Result<List<City>> {
+                return Result.Success(provideCityList().filter { it.name.startsWith(prefix) })
             }
         }
     }

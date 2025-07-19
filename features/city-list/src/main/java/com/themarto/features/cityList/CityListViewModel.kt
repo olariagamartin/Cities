@@ -38,4 +38,16 @@ class CityListViewModel(
         }
     }
 
+    fun filterByPrefix(searchPrefix: String) {
+        viewModelScope.launch {
+            val result = cityRepository.getCitiesFiltered(searchPrefix)
+            if (result.isSuccess()) {
+                _uiState.value = CityListUIState(cities = result.data)
+            }
+            else if (result.isError()) {
+                _uiState.value = CityListUIState(error = result.error)
+            }
+        }
+    }
+
 }
