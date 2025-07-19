@@ -11,8 +11,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.themarto.cities.ui.theme.CitiesTheme
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,22 +24,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             CitiesTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Cities(
-                        listOf(
-                            City("id", "name", "country", Coordinates(1.0, 2.0)),
-                            City("id", "name", "country", Coordinates(1.0, 2.0)),
-                            City("id", "name", "country", Coordinates(1.0, 2.0)),
-                            City("id", "name", "country", Coordinates(1.0, 2.0)),
-                            City("id", "name", "country", Coordinates(1.0, 2.0)),
-                            City("id", "name", "country", Coordinates(1.0, 2.0)),
-                            City("id", "name", "country", Coordinates(1.0, 2.0)),
-                            City("id", "name", "country", Coordinates(1.0, 2.0)),
-                            City("id", "name", "country", Coordinates(1.0, 2.0)),
-                            City("id", "name", "country", Coordinates(1.0, 2.0)),
-                            City("id", "name", "country", Coordinates(1.0, 2.0)),
-                        ),
-                        Modifier.padding(innerPadding).fillMaxSize()
-                    )
+                    CitiesScreen()
                 }
             }
         }
@@ -44,14 +32,15 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Cities(
-    cities: List<City>,
-    modifier: Modifier = Modifier,
+fun CitiesScreen(
+    viewModel: CityListViewModel = koinViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     LazyColumn(
-        modifier = modifier
+        modifier = Modifier.fillMaxSize()
     ) {
-        items(cities) { city ->
+        items(uiState.cities) { city ->
             Text(text = city.name)
             Text(text = city.country)
             Text(text = "${city.coordinates.latitude}, ${city.coordinates.longitude}")
