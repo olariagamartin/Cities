@@ -10,7 +10,7 @@ interface CityDao {
     @Insert
     suspend fun insertAll(cities: List<DBCity>)
 
-    @Query("SELECT * FROM cities")
+    @Query("SELECT * FROM cities ORDER BY name, country")
     suspend fun getAll(): List<DBCity>
 
 
