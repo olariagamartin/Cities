@@ -97,6 +97,19 @@ class CityListVMTest {
 
     }
 
+    @Test
+    fun `A5_WHEN onFavClick is called THEN city is updated`() = runTest {
+        val repo = spy(provideCityRepository())
+        val vm = CityListViewModel(repo)
+
+        val city = provideCityList().first()
+        vm.onFavClick(city)
+        advanceUntilIdle()
+
+        verify(repo).updateCity(city.copy(isFavorite = !city.isFavorite))
+
+    }
+
     // ------ Test help methods ----------
     private fun provideCityRepository(
         getCities: suspend () -> Result<List<City>> = { Result.Success(provideCityList()) }
@@ -108,6 +121,10 @@ class CityListVMTest {
 
             override suspend fun getCitiesFiltered(prefix: String): Result<List<City>> {
                 return Result.Success(provideCityList().filter { it.name.startsWith(prefix) })
+            }
+
+            override suspend fun updateCity(city: City) {
+                // nothing
             }
         }
     }

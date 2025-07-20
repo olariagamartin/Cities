@@ -54,4 +54,10 @@ class CityListViewModel(
         }
     }
 
+    fun onFavClick(city: City) {
+        viewModelScope.launch {
+            cityRepository.updateCity(city.copy(isFavorite = !city.isFavorite))
+        }
+    }
+
 }

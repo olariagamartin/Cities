@@ -8,4 +8,6 @@ interface CityRepository {
     suspend fun getCities(): Result<List<City>>
 
     suspend fun getCitiesFiltered(prefix: String): Result<List<City>>
+
+    suspend fun updateCity(city: City)
 }
