@@ -70,6 +70,25 @@ class CityListVMTest {
     }
 
     @Test
+    fun `B2_WHEN getCitiesFiltered has not responded THEN loading is true`() = runTest {
+        val vm = CityListViewModel(provideCityRepository())
+        vm.uiState.test {
+            assertEquals(true, awaitItem().loading)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `B3_WHEN getCitiesFiltered has responded THEN loading is false`() = runTest {
+        val vm = CityListViewModel(provideCityRepository())
+        vm.uiState.test {
+            awaitItem() // initial emit
+            assertEquals(false, awaitItem().loading)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `C0_WHEN onQueryChange is called THEN getCitiesFiltered with prefix is called`() = runTest {
         val cityRepoMock = spy(provideCityRepository())
         val vm = CityListViewModel(cityRepoMock)

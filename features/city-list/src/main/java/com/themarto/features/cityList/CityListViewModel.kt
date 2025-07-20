@@ -15,7 +15,8 @@ import kotlinx.coroutines.launch
 data class CityListUIState(
     val cities: List<City> = emptyList(),
     val error: String? = null,
-    val query: String = ""
+    val query: String = "",
+    val loading: Boolean = false
 )
 
 class CityListViewModel(
@@ -34,15 +35,29 @@ class CityListViewModel(
     }
 
     fun onQueryChanged(searchPrefix: String) {
-        _uiState.update { it.copy(query = searchPrefix) }
-        _uiState.value = _uiState.value.copy(query = searchPrefix)
+        _uiState.update {
+            it.copy(
+                query = searchPrefix,
+                loading = true
+            )
+        }
         viewModelScope.launch {
             val result = cityRepository.getCitiesFiltered(searchPrefix)
             if (result.isSuccess()) {
-                _uiState.update { it.copy(cities = result.data) }
+                _uiState.update {
+                    it.copy(
+                        cities = result.data,
+                        loading = false
+                    )
+                }
             }
             else if (result.isError()) {
-                _uiState.update { it.copy(error = result.error) }
+                _uiState.update {
+                    it.copy(
+                        error = result.error,
+                        loading = false
+                    )
+                }
             }
         }
     }
