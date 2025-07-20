@@ -103,10 +103,10 @@ class CityListVMTest {
         val vm = CityListViewModel(repo)
 
         val city = provideCityList().first()
-        vm.onFavClick(city)
+        vm.onFavClick(city.id)
         advanceUntilIdle()
 
-        verify(repo).updateCity(city.copy(isFavorite = !city.isFavorite))
+        verify(repo).toggleFavorite(city.id)
 
     }
 
@@ -123,7 +123,7 @@ class CityListVMTest {
                 return Result.Success(provideCityList().filter { it.name.startsWith(prefix) })
             }
 
-            override suspend fun updateCity(city: City) {
+            override suspend fun toggleFavorite(id: String) {
                 // nothing
             }
         }

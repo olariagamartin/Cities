@@ -9,5 +9,5 @@ interface CityRepository {
 
     suspend fun getCitiesFiltered(prefix: String): Result<List<City>>
 
-    suspend fun updateCity(city: City)
+    suspend fun toggleFavorite(id: String)
 }
