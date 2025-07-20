@@ -40,6 +40,7 @@ fun CitiesScreen(
         uiState = uiState,
         onQueryChange = viewModel::onQueryChanged,
         onFavClick = viewModel::onFavClick,
+        onFilterFavs = viewModel::onFilterFavClick,
         loading = uiState.loading
     )
 }
@@ -49,6 +50,7 @@ fun CitiesScreenContent(
     uiState: CityListUIState,
     onQueryChange: (String) -> Unit = {},
     onFavClick: (String) -> Unit = { },
+    onFilterFavs: () -> Unit = { },
     loading: Boolean = false
 ) {
     Surface(
@@ -58,6 +60,8 @@ fun CitiesScreenContent(
             CityFilterBar(
                 query = uiState.query,
                 onQueryChange = onQueryChange,
+                onFilterFavs = onFilterFavs,
+                filterFavs = uiState.filterFav
             )
             if (loading) {
                 Box(
@@ -81,19 +85,33 @@ fun CitiesScreenContent(
 fun CityFilterBar(
     query: String,
     onQueryChange: (String) -> Unit,
+    onFilterFavs: () -> Unit = { },
+    filterFavs: Boolean = false
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth()
     ) {
-        OutlinedTextField(
-            value = query,
-            onValueChange = onQueryChange,
-            singleLine = true,
-            modifier = Modifier
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-            placeholder = { Text("Search city…") }
-        )
+        Row {
+            OutlinedTextField(
+                value = query,
+                onValueChange = onQueryChange,
+                singleLine = true,
+                modifier = Modifier
+                    .padding(start = 12.dp, top = 8.dp, bottom = 8.dp)
+                    .weight(1f),
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                placeholder = { Text("Search city…") }
+            )
+            IconButton(
+                onClick = onFilterFavs,
+                modifier = Modifier.padding(2.dp).align(Alignment.CenterVertically)
+            ) {
+                Icon(
+                    imageVector = if (filterFavs) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = null
+                )
+            }
+        }
     }
 }
 
