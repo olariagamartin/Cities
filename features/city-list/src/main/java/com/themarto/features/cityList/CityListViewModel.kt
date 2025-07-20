@@ -32,18 +32,20 @@ class CityListViewModel(
     }
 
     private fun loadCities() {
-        onQueryChanged("")
-    }
-
-    fun onQueryChanged(searchPrefix: String) {
         _uiState.update {
             it.copy(
-                query = searchPrefix,
                 loading = true
             )
         }
+        refreshCityList()
+    }
+
+    private fun refreshCityList(
+        searchPrefix: String = _uiState.value.query,
+        filterFav: Boolean = _uiState.value.filterFav
+    ) {
         viewModelScope.launch {
-            val result = cityRepository.getCitiesFiltered(searchPrefix)
+            val result = cityRepository.getCitiesFiltered(searchPrefix, filterFav)
             if (result.isSuccess()) {
                 _uiState.update {
                     it.copy(
@@ -51,8 +53,7 @@ class CityListViewModel(
                         loading = false
                     )
                 }
-            }
-            else if (result.isError()) {
+            } else if (result.isError()) {
                 _uiState.update {
                     it.copy(
                         error = result.error,
@@ -63,19 +64,36 @@ class CityListViewModel(
         }
     }
 
+    fun onQueryChanged(searchPrefix: String) {
+        _uiState.update {
+            it.copy(
+                query = searchPrefix,
+                loading = true
+            )
+        }
+        refreshCityList(searchPrefix)
+    }
+
+
+
     fun onFavClick(id: String) {
         viewModelScope.launch {
             cityRepository.toggleFavorite(id)
-            onQueryChanged(_uiState.value.query)
+            refreshCityList(_uiState.value.query)
         }
     }
 
     fun onFilterFavClick() {
         _uiState.update {
             it.copy(
-                filterFav = !it.filterFav
+                filterFav = !it.filterFav,
+                loading = true
             )
         }
+        refreshCityList(
+            _uiState.value.query,
+            _uiState.value.filterFav
+        )
     }
 
 }

@@ -17,6 +17,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -59,7 +60,7 @@ class CityListVMTest {
     @Test
     fun `B1_WHEN getCitiesFiltered respond error THEN display error`() = runTest {
         val viewModel = CityListViewModel(
-            provideCityRepository { Result.Error("error") }
+            provideCityRepository { _, _ -> Result.Error("error") }
         )
 
         viewModel.uiState.test {
@@ -140,7 +141,7 @@ class CityListVMTest {
         vm.onFavClick(city.id)
         advanceUntilIdle()
 
-        verify(repo, times(2)).getCitiesFiltered(any())
+        verify(repo, times(2)).getCitiesFiltered(any(), any())
 
     }
 
@@ -156,16 +157,31 @@ class CityListVMTest {
         }
     }
 
+   @Test
+   fun `E1_WHEN onFilterFavClick called THEN getCitiesFiltered is called with filterFav set to true`() = runTest {
+       val repo = spy(provideCityRepository())
+       val vm = CityListViewModel(repo)
+
+       vm.onFilterFavClick()
+       advanceUntilIdle()
+
+       verify(repo).getCitiesFiltered(any(), eq(true))
+
+   }
+
     // ------ Test help methods ----------
     private fun provideCityRepository(
-        getCitiesFiltered: suspend (String) -> Result<List<City>> = { prefix ->
-            Result.Success(provideCityList().filter { it.name.startsWith(prefix) })
+        getCitiesFiltered: suspend (String, Boolean) -> Result<List<City>> = { prefix, filterFav ->
+            Result.Success(provideCityList()
+                .filter {
+                    it.name.startsWith(prefix).and(!filterFav || it.isFavorite)
+                })
         }
     ): CityRepository {
         return object : CityRepository {
 
-            override suspend fun getCitiesFiltered(prefix: String): Result<List<City>> {
-                return getCitiesFiltered(prefix)
+            override suspend fun getCitiesFiltered(prefix: String, filterFav: Boolean): Result<List<City>> {
+                return getCitiesFiltered(prefix, filterFav)
             }
 
             override suspend fun toggleFavorite(id: String) {
