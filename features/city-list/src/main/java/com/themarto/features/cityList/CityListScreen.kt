@@ -41,7 +41,6 @@ fun CitiesScreen(
         onQueryChange = viewModel::onQueryChanged,
         onFavClick = viewModel::onFavClick,
         onFilterFavs = viewModel::onFilterFavClick,
-        loading = uiState.loading
     )
 }
 
@@ -51,7 +50,6 @@ fun CitiesScreenContent(
     onQueryChange: (String) -> Unit = {},
     onFavClick: (String) -> Unit = { },
     onFilterFavs: () -> Unit = { },
-    loading: Boolean = false
 ) {
     Surface(
         modifier = Modifier.fillMaxSize()
@@ -63,7 +61,7 @@ fun CitiesScreenContent(
                 onFilterFavs = onFilterFavs,
                 filterFavs = uiState.filterFav
             )
-            if (loading) {
+            if (uiState.loading) {
                 Box(
                     Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -206,6 +204,5 @@ private fun CityScreenPreview() {
                 City("id", "Name", "CT", Coordinates(1.0, 2.0), false),
             )
         ),
-        loading = false
     )
 }
