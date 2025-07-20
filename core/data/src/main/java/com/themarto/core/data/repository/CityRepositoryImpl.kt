@@ -12,7 +12,7 @@ class CityRepositoryImpl(
 ) : CityRepository {
 
     override suspend fun getCitiesFiltered(prefix: String, filterFav: Boolean): Result<List<City>> {
-        val dbResult = cityDao.getByName(prefix)
+        val dbResult = cityDao.getFiltered(prefix, filterFav)
         if (dbResult.isEmpty() && prefix.isEmpty()) {
             Log.d("CityRepository", "DB is empty, fetching from API")
             val apiResult = cityApi.getCities()
