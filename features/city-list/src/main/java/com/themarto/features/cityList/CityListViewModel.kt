@@ -16,6 +16,7 @@ data class CityListUIState(
     val cities: List<City> = emptyList(),
     val error: String? = null,
     val query: String = "",
+    val filterFav: Boolean = false,
     val loading: Boolean = false
 )
 
@@ -66,6 +67,14 @@ class CityListViewModel(
         viewModelScope.launch {
             cityRepository.toggleFavorite(id)
             onQueryChanged(_uiState.value.query)
+        }
+    }
+
+    fun onFilterFavClick() {
+        _uiState.update {
+            it.copy(
+                filterFav = !it.filterFav
+            )
         }
     }
 

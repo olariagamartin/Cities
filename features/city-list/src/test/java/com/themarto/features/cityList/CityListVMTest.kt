@@ -144,6 +144,18 @@ class CityListVMTest {
 
     }
 
+    @Test
+    fun `E0_WHEN onFilterFavClick called THEN filterFav is toggled`() = runTest {
+        val vm = CityListViewModel(provideCityRepository())
+
+        vm.uiState.test {
+            assertEquals(false, awaitItem().filterFav)
+            vm.onFilterFavClick()
+            assertEquals(true, awaitItem().filterFav)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
     // ------ Test help methods ----------
     private fun provideCityRepository(
         getCitiesFiltered: suspend (String) -> Result<List<City>> = { prefix ->
