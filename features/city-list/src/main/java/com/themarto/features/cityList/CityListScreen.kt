@@ -1,13 +1,17 @@
 package com.themarto.features.cityList
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -31,6 +35,7 @@ fun CitiesScreen(
     CitiesScreenContent(
         uiState = uiState,
         onQueryChange = viewModel::onQueryChanged,
+        onFavClick = viewModel::onFavClick
     )
 }
 
@@ -38,6 +43,7 @@ fun CitiesScreen(
 fun CitiesScreenContent(
     uiState: CityListUIState,
     onQueryChange: (String) -> Unit,
+    onFavClick: (String) -> Unit = { }
 ) {
     Column {
         CityFilterBar(
@@ -45,7 +51,8 @@ fun CitiesScreenContent(
             onQueryChange = onQueryChange,
         )
         CityList(
-            uiState = uiState
+            uiState = uiState,
+            onFavClick = onFavClick
         )
     }
 }
@@ -73,6 +80,7 @@ fun CityFilterBar(
 @Composable
 fun CityList(
     uiState: CityListUIState,
+    onFavClick: (String) -> Unit = { }
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth()
@@ -81,7 +89,10 @@ fun CityList(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
         ) {
             items(uiState.cities) { city ->
-                CityItem(city = city)
+                CityItem(
+                    city = city,
+                    onFavClick = { onFavClick(city.id) }
+                )
             }
         }
     }
@@ -90,17 +101,34 @@ fun CityList(
 
 @Composable
 fun CityItem(
-    city: City
+    city: City,
+    onFavClick: () -> Unit = { }
 ) {
-    Text(
-        text = "${city.name}, ${city.country}",
-        fontSize = 18.sp,
-        modifier = Modifier.padding(2.dp)
-    )
-    Text(
-        text = "${city.coordinates.latitude}, ${city.coordinates.longitude}",
-        modifier = Modifier.padding(2.dp)
-    )
+    Row {
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                text = "${city.name}, ${city.country}",
+                fontSize = 18.sp,
+                modifier = Modifier.padding(2.dp)
+            )
+            Text(
+                text = "${city.coordinates.latitude}, ${city.coordinates.longitude}",
+                modifier = Modifier.padding(2.dp)
+            )
+        }
+        IconButton(
+            onClick = onFavClick,
+            modifier = Modifier.padding(2.dp)
+        ) {
+            Icon(
+                imageVector = if (city.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                contentDescription = null
+            )
+        }
+    }
+
 }
 
 @Preview
@@ -118,9 +146,9 @@ private fun CityListPreview() {
     CityList(
         uiState = CityListUIState(
             cities = listOf(
+                City("id", "Name", "CT", Coordinates(1.0, 2.0), true),
                 City("id", "Name", "CT", Coordinates(1.0, 2.0), false),
-                City("id", "Name", "CT", Coordinates(1.0, 2.0), false),
-                City("id", "Name", "CT", Coordinates(1.0, 2.0), false),
+                City("id", "Name", "CT", Coordinates(1.0, 2.0), true),
                 City("id", "Name", "CT", Coordinates(1.0, 2.0), false),
             )
         )
