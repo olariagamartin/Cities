@@ -1,7 +1,9 @@
 package com.themarto.features.cityList
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -17,6 +20,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,25 +39,41 @@ fun CitiesScreen(
     CitiesScreenContent(
         uiState = uiState,
         onQueryChange = viewModel::onQueryChanged,
-        onFavClick = viewModel::onFavClick
+        onFavClick = viewModel::onFavClick,
+        loading = uiState.loading
     )
 }
 
 @Composable
 fun CitiesScreenContent(
     uiState: CityListUIState,
-    onQueryChange: (String) -> Unit,
-    onFavClick: (String) -> Unit = { }
+    onQueryChange: (String) -> Unit = {},
+    onFavClick: (String) -> Unit = { },
+    loading: Boolean = false
 ) {
-    Column {
-        CityFilterBar(
-            query = uiState.query,
-            onQueryChange = onQueryChange,
-        )
-        CityList(
-            uiState = uiState,
-            onFavClick = onFavClick
-        )
+    Surface(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Column {
+            CityFilterBar(
+                query = uiState.query,
+                onQueryChange = onQueryChange,
+            )
+            if (loading) {
+                Box(
+                    Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                CityList(
+                    uiState = uiState,
+                    onFavClick = onFavClick
+                )
+            }
+
+        }
     }
 }
 
@@ -154,4 +174,20 @@ private fun CityListPreview() {
         )
     )
 
+}
+
+@Preview
+@Composable
+private fun CityScreenPreview() {
+    CitiesScreenContent(
+        uiState = CityListUIState(
+            cities = listOf(
+                City("id", "Name", "CT", Coordinates(1.0, 2.0), true),
+                City("id", "Name", "CT", Coordinates(1.0, 2.0), false),
+                City("id", "Name", "CT", Coordinates(1.0, 2.0), true),
+                City("id", "Name", "CT", Coordinates(1.0, 2.0), false),
+            )
+        ),
+        loading = false
+    )
 }
