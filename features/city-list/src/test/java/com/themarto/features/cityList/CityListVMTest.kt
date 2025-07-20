@@ -131,9 +131,9 @@ class CityListVMTest {
 
     private fun provideCityList() : List<City> {
         return listOf(
-            City("id", "name", "country", Coordinates(1.0, 2.0)),
-            City("id", "name", "country", Coordinates(1.0, 2.0)),
-            City("id", "name", "country", Coordinates(1.0, 2.0)),
+            City("id", "name", "country", Coordinates(1.0, 2.0), false),
+            City("id", "name", "country", Coordinates(1.0, 2.0), false),
+            City("id", "name", "country", Coordinates(1.0, 2.0), false),
         )
     }
 

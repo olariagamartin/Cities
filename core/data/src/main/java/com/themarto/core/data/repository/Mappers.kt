@@ -10,7 +10,8 @@ fun CityDTO.toDomain() = City(
     id = this.id,
     name = this.name,
     country = this.country,
-    coordinates = this.coordinates.toDomain()
+    coordinates = this.coordinates.toDomain(),
+    isFavorite = false
 )
 
 fun CoordinatesDTO.toDomain() = Coordinates(
@@ -25,7 +26,8 @@ fun DBCity.toDomain() = City(
     coordinates = Coordinates(
         longitude = this.longitude,
         latitude = this.latitude
-    )
+    ),
+    isFavorite = this.favorite
 )
 
 fun CityDTO.toDB() = DBCity(
@@ -33,5 +35,6 @@ fun CityDTO.toDB() = DBCity(
     name = this.name,
     country = this.country,
     latitude = this.coordinates.latitude,
-    longitude = this.coordinates.longitude
+    longitude = this.coordinates.longitude,
+    favorite = false
 )
