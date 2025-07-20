@@ -47,7 +47,7 @@ class CityListVMTest {
     }
 
     @Test
-    fun `A1_WHEN cities are retrieved THEN they are displayed`() = runTest {
+    fun `B0_WHEN cities are retrieved THEN they are displayed`() = runTest {
         val vm = CityListViewModel(provideCityRepository())
         vm.uiState.test {
             awaitItem() // initial emit
@@ -57,7 +57,7 @@ class CityListVMTest {
     }
 
     @Test
-    fun `A2_WHEN getCitiesFiltered respond error THEN display error`() = runTest {
+    fun `B1_WHEN getCitiesFiltered respond error THEN display error`() = runTest {
         val viewModel = CityListViewModel(
             provideCityRepository { Result.Error("error") }
         )
@@ -70,7 +70,7 @@ class CityListVMTest {
     }
 
     @Test
-    fun `A3_WHEN onQueryChange is called THEN getCitiesFiltered with prefix is called`() = runTest {
+    fun `B2_WHEN onQueryChange is called THEN getCitiesFiltered with prefix is called`() = runTest {
         val cityRepoMock = spy(provideCityRepository())
         val vm = CityListViewModel(cityRepoMock)
 
@@ -82,7 +82,7 @@ class CityListVMTest {
     }
 
     @Test
-    fun `A4_WHEN onQueryChange is called THEN query is updated`()  = runTest {
+    fun `B3_WHEN onQueryChange is called THEN query is updated`()  = runTest {
         val vm = CityListViewModel(provideCityRepository())
 
         vm.onQueryChanged("prefix1")
@@ -100,7 +100,7 @@ class CityListVMTest {
     }
 
     @Test
-    fun `A5_WHEN onFavClick is called THEN toggleFavorite is called`() = runTest {
+    fun `C0_WHEN onFavClick is called THEN toggleFavorite is called`() = runTest {
         val repo = spy(provideCityRepository())
         val vm = CityListViewModel(repo)
 
@@ -113,7 +113,7 @@ class CityListVMTest {
     }
 
     @Test
-    fun `A6_WHEN onFavClick is called THEN getCitiesFiltered is called again`() = runTest {
+    fun `C1_WHEN onFavClick is called THEN getCitiesFiltered is called again`() = runTest {
         val repo = spy(provideCityRepository())
         val vm = CityListViewModel(repo)
 
