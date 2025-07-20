@@ -21,7 +21,7 @@ class CityRepositoryImpl(
             val apiResult = cityApi.getCities()
             cityDao.insertAll(apiResult.map { it.toDB() })
 
-            return Result.Success(apiResult.map { it.toDomain() })
+            return Result.Success(cityDao.getAll().map { it.toDomain() })
         }
 
         Log.d("CityRepository", "DB is not empty")
