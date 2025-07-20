@@ -49,7 +49,6 @@ class CityListVMTest {
         val vm = CityListViewModel(provideCityRepository())
         vm.uiState.test {
             awaitItem() // initial emit
-            advanceUntilIdle()
             assertEquals(provideCityList(), awaitItem().cities)
             cancelAndIgnoreRemainingEvents()
         }
@@ -63,24 +62,37 @@ class CityListVMTest {
 
         viewModel.uiState.test {
             awaitItem() // initial emit
-            advanceUntilIdle()
             assertEquals("error", awaitItem().error)
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
-    fun `A3_WHEN filterByPrefix is called THEN getCities with prefix is called`() = runTest {
+    fun `A3_WHEN onQueryChange is called THEN getCities with prefix is called`() = runTest {
         val cityRepoMock = spy(provideCityRepository())
         val vm = CityListViewModel(cityRepoMock)
 
-        advanceUntilIdle()
-
-        vm.filterByPrefix("prefix")
+        vm.onQueryChanged("prefix")
 
         advanceUntilIdle()
 
         verify(cityRepoMock).getCitiesFiltered("prefix")
+    }
+
+    @Test
+    fun `A4_WHEN onQueryChange is called THEN query is updated`()  = runTest {
+        val vm = CityListViewModel(provideCityRepository())
+
+        vm.onQueryChanged("prefix1")
+
+        vm.onQueryChanged("prefix2")
+
+        vm.uiState.test {
+            assertEquals("prefix2", awaitItem().query)
+            cancelAndIgnoreRemainingEvents()
+        }
+
+
     }
 
     // ------ Test help methods ----------

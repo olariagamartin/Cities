@@ -13,7 +13,8 @@ import kotlinx.coroutines.launch
 
 data class CityListUIState(
     val cities: List<City> = emptyList(),
-    val error: String? = null
+    val error: String? = null,
+    val query: String = ""
 )
 
 class CityListViewModel(
@@ -38,7 +39,8 @@ class CityListViewModel(
         }
     }
 
-    fun filterByPrefix(searchPrefix: String) {
+    fun onQueryChanged(searchPrefix: String) {
+        _uiState.value = _uiState.value.copy(query = searchPrefix)
         viewModelScope.launch {
             val result = cityRepository.getCitiesFiltered(searchPrefix)
             if (result.isSuccess()) {
