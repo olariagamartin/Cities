@@ -32,4 +32,8 @@ class CityRepositoryImpl(
         val dbResult = cityDao.getByName(prefix)
         return Result.Success(dbResult.map { it.toDomain() })
     }
+
+    override suspend fun toggleFavorite(id: String) {
+        cityDao.toggleFavourite(id)
+    }
 }

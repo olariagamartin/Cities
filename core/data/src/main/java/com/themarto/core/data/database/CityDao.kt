@@ -20,4 +20,7 @@ interface CityDao {
     """)
     suspend fun getByName(name: String): List<DBCity>
 
+    @Query("UPDATE cities SET favorite = CASE favorite WHEN 1 THEN 0 ELSE 1 END WHERE id = :id")
+    suspend fun toggleFavourite(id: String)
+
 }
