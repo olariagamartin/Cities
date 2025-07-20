@@ -16,6 +16,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.verify
 
@@ -98,7 +99,7 @@ class CityListVMTest {
     }
 
     @Test
-    fun `A5_WHEN onFavClick is called THEN city is updated`() = runTest {
+    fun `A5_WHEN onFavClick is called THEN toggleFavorite is called`() = runTest {
         val repo = spy(provideCityRepository())
         val vm = CityListViewModel(repo)
 
@@ -107,6 +108,19 @@ class CityListVMTest {
         advanceUntilIdle()
 
         verify(repo).toggleFavorite(city.id)
+
+    }
+
+    @Test
+    fun `A6_WHEN onFavClick is called THEN getCities is called again`() = runTest {
+        val repo = spy(provideCityRepository())
+        val vm = CityListViewModel(repo)
+
+        val city = provideCityList().first()
+        vm.onFavClick(city.id)
+        advanceUntilIdle()
+
+        verify(repo).getCitiesFiltered(any())
 
     }
 

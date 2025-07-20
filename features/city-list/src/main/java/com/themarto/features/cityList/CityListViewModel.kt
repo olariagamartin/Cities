@@ -57,6 +57,7 @@ class CityListViewModel(
     fun onFavClick(id: String) {
         viewModelScope.launch {
             cityRepository.toggleFavorite(id)
+            onQueryChanged(_uiState.value.query)
         }
     }
 
