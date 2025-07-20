@@ -70,7 +70,7 @@ class CityListVMTest {
     }
 
     @Test
-    fun `B2_WHEN onQueryChange is called THEN getCitiesFiltered with prefix is called`() = runTest {
+    fun `C0_WHEN onQueryChange is called THEN getCitiesFiltered with prefix is called`() = runTest {
         val cityRepoMock = spy(provideCityRepository())
         val vm = CityListViewModel(cityRepoMock)
 
@@ -82,7 +82,7 @@ class CityListVMTest {
     }
 
     @Test
-    fun `B3_WHEN onQueryChange is called THEN query is updated`()  = runTest {
+    fun `C1_WHEN onQueryChange is called THEN query is updated`()  = runTest {
         val vm = CityListViewModel(provideCityRepository())
 
         vm.onQueryChanged("prefix1")
@@ -100,7 +100,7 @@ class CityListVMTest {
     }
 
     @Test
-    fun `C0_WHEN onFavClick is called THEN toggleFavorite is called`() = runTest {
+    fun `D0_WHEN onFavClick is called THEN toggleFavorite is called`() = runTest {
         val repo = spy(provideCityRepository())
         val vm = CityListViewModel(repo)
 
@@ -113,7 +113,7 @@ class CityListVMTest {
     }
 
     @Test
-    fun `C1_WHEN onFavClick is called THEN getCitiesFiltered is called again`() = runTest {
+    fun `D1_WHEN onFavClick is called THEN getCitiesFiltered is called again`() = runTest {
         val repo = spy(provideCityRepository())
         val vm = CityListViewModel(repo)
 
