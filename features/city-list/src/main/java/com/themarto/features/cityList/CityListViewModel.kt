@@ -30,14 +30,7 @@ class CityListViewModel(
     }
 
     private fun loadCities() {
-        viewModelScope.launch {
-            val result = cityRepository.getCities()
-            if (result.isSuccess()) {
-                _uiState.update { it.copy(cities = result.data) }
-            } else if (result.isError()) {
-                _uiState.update { it.copy(error = result.error) }
-            }
-        }
+        onQueryChanged("")
     }
 
     fun onQueryChanged(searchPrefix: String) {

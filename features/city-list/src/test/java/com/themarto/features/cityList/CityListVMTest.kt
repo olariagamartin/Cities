@@ -18,6 +18,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.spy
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 
 @ExperimentalCoroutinesApi
@@ -56,7 +57,7 @@ class CityListVMTest {
     }
 
     @Test
-    fun `A2_WHEN getCities respond error THEN display error`() = runTest {
+    fun `A2_WHEN getCitiesFiltered respond error THEN display error`() = runTest {
         val viewModel = CityListViewModel(
             provideCityRepository { Result.Error("error") }
         )
@@ -69,7 +70,7 @@ class CityListVMTest {
     }
 
     @Test
-    fun `A3_WHEN onQueryChange is called THEN getCities with prefix is called`() = runTest {
+    fun `A3_WHEN onQueryChange is called THEN getCitiesFiltered with prefix is called`() = runTest {
         val cityRepoMock = spy(provideCityRepository())
         val vm = CityListViewModel(cityRepoMock)
 
@@ -112,7 +113,7 @@ class CityListVMTest {
     }
 
     @Test
-    fun `A6_WHEN onFavClick is called THEN getCities is called again`() = runTest {
+    fun `A6_WHEN onFavClick is called THEN getCitiesFiltered is called again`() = runTest {
         val repo = spy(provideCityRepository())
         val vm = CityListViewModel(repo)
 
@@ -120,21 +121,20 @@ class CityListVMTest {
         vm.onFavClick(city.id)
         advanceUntilIdle()
 
-        verify(repo).getCitiesFiltered(any())
+        verify(repo, times(2)).getCitiesFiltered(any())
 
     }
 
     // ------ Test help methods ----------
     private fun provideCityRepository(
-        getCities: suspend () -> Result<List<City>> = { Result.Success(provideCityList()) }
+        getCitiesFiltered: suspend (String) -> Result<List<City>> = { prefix ->
+            Result.Success(provideCityList().filter { it.name.startsWith(prefix) })
+        }
     ): CityRepository {
         return object : CityRepository {
-            override suspend fun getCities(): Result<List<City>> {
-                return getCities()
-            }
 
             override suspend fun getCitiesFiltered(prefix: String): Result<List<City>> {
-                return Result.Success(provideCityList().filter { it.name.startsWith(prefix) })
+                return getCitiesFiltered(prefix)
             }
 
             override suspend fun toggleFavorite(id: String) {
