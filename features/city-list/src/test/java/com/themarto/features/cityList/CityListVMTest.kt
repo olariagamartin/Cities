@@ -87,6 +87,8 @@ class CityListVMTest {
 
         vm.onQueryChanged("prefix2")
 
+        advanceUntilIdle()
+
         vm.uiState.test {
             assertEquals("prefix2", awaitItem().query)
             cancelAndIgnoreRemainingEvents()
