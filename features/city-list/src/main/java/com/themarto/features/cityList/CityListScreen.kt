@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.themarto.core.domain.City
 import com.themarto.core.domain.Coordinates
@@ -80,13 +81,26 @@ fun CityList(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
         ) {
             items(uiState.cities) { city ->
-                Text(text = city.name)
-                Text(text = city.country)
-                Text(text = "${city.coordinates.latitude}, ${city.coordinates.longitude}")
+                CityItem(city = city)
             }
         }
     }
 
+}
+
+@Composable
+fun CityItem(
+    city: City
+) {
+    Text(
+        text = "${city.name}, ${city.country}",
+        fontSize = 18.sp,
+        modifier = Modifier.padding(2.dp)
+    )
+    Text(
+        text = "${city.coordinates.latitude}, ${city.coordinates.longitude}",
+        modifier = Modifier.padding(2.dp)
+    )
 }
 
 @Preview
@@ -104,10 +118,10 @@ private fun CityListPreview() {
     CityList(
         uiState = CityListUIState(
             cities = listOf(
-                City("id", "name", "country", Coordinates(1.0, 2.0), false),
-                City("id", "name", "country", Coordinates(1.0, 2.0), false),
-                City("id", "name", "country", Coordinates(1.0, 2.0), false),
-                City("id", "name", "country", Coordinates(1.0, 2.0), false),
+                City("id", "Name", "CT", Coordinates(1.0, 2.0), false),
+                City("id", "Name", "CT", Coordinates(1.0, 2.0), false),
+                City("id", "Name", "CT", Coordinates(1.0, 2.0), false),
+                City("id", "Name", "CT", Coordinates(1.0, 2.0), false),
             )
         )
     )
