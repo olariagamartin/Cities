@@ -1,5 +1,6 @@
 package com.themarto.features.cityList
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun CitiesScreen(
     viewModel: CityListViewModel = koinViewModel(),
+    onCityClick: (String) -> Unit = { }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -41,6 +43,7 @@ fun CitiesScreen(
         onQueryChange = viewModel::onQueryChanged,
         onFavClick = viewModel::onFavClick,
         onFilterFavs = viewModel::onFilterFavClick,
+        onCityClick = onCityClick
     )
 }
 
@@ -50,6 +53,7 @@ fun CitiesScreenContent(
     onQueryChange: (String) -> Unit = {},
     onFavClick: (String) -> Unit = { },
     onFilterFavs: () -> Unit = { },
+    onCityClick: (String) -> Unit = { }
 ) {
     Surface(
         modifier = Modifier.fillMaxSize()
@@ -71,7 +75,8 @@ fun CitiesScreenContent(
             } else {
                 CityList(
                     uiState = uiState,
-                    onFavClick = onFavClick
+                    onFavClick = onFavClick,
+                    onCityClick = onCityClick
                 )
             }
 
@@ -116,7 +121,8 @@ fun CityFilterBar(
 @Composable
 fun CityList(
     uiState: CityListUIState,
-    onFavClick: (String) -> Unit = { }
+    onFavClick: (String) -> Unit = { },
+    onCityClick: (String) -> Unit = { }
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth()
@@ -127,7 +133,8 @@ fun CityList(
             items(uiState.cities) { city ->
                 CityItem(
                     city = city,
-                    onFavClick = { onFavClick(city.id) }
+                    onFavClick = { onFavClick(city.id) },
+                    onClick = { onCityClick(city.id) }
                 )
             }
         }
@@ -138,9 +145,12 @@ fun CityList(
 @Composable
 fun CityItem(
     city: City,
-    onFavClick: () -> Unit = { }
+    onFavClick: () -> Unit = { },
+    onClick: () -> Unit = { }
 ) {
-    Row {
+    Row (
+        modifier = Modifier.clickable(onClick = onClick)
+    ){
         Column(
             modifier = Modifier.weight(1f)
         ) {
