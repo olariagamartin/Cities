@@ -1,5 +1,6 @@
 package com.themarto.features.cityList
 
+import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,8 +22,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,17 +39,45 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun CitiesScreen(
     viewModel: CityListViewModel = koinViewModel(),
-    onCityClick: (String) -> Unit = { }
+    navigateToCityMap: (String) -> Unit = { }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    CitiesScreenContent(
-        uiState = uiState,
-        onQueryChange = viewModel::onQueryChanged,
-        onFavClick = viewModel::onFavClick,
-        onFilterFavs = viewModel::onFilterFavClick,
-        onCityClick = onCityClick
-    )
+    val config = LocalConfiguration.current
+    val isLandscape = config.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
+
+    if (isLandscape) {
+        Row {
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                CitiesScreenContent(
+                    uiState = uiState,
+                    onQueryChange = viewModel::onQueryChanged,
+                    onFavClick = viewModel::onFavClick,
+                    onFilterFavs = viewModel::onFilterFavClick,
+                    onCityClick = { cityId -> selectedId = cityId }
+                )
+            }
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                MapContainer(
+                    coordinates = uiState.cities.find { it.id == selectedId }?.coordinates
+                )
+            }
+        }
+    } else {
+        CitiesScreenContent(
+            uiState = uiState,
+            onQueryChange = viewModel::onQueryChanged,
+            onFavClick = viewModel::onFavClick,
+            onFilterFavs = viewModel::onFilterFavClick,
+            onCityClick = navigateToCityMap
+        )
+    }
 }
 
 @Composable

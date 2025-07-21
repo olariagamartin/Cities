@@ -38,8 +38,8 @@ fun MainAppContainer() {
                     route = Destinations.CITIES
                 ) {
                     CitiesScreen(
-                        onCityClick = {
-                            navController.navigate(Destinations.mapRoute(it))
+                        navigateToCityMap = { cityId ->
+                            navController.navigate(Destinations.mapRoute(cityId))
                         }
                     )
                 }
