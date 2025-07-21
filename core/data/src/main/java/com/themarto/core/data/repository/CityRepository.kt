@@ -8,4 +8,6 @@ interface CityRepository {
     suspend fun getCitiesFiltered(prefix: String, filterFav: Boolean = false): Result<List<City>>
 
     suspend fun toggleFavorite(id: String)
+
+    suspend fun getCityById(id: String): Result<City>
 }

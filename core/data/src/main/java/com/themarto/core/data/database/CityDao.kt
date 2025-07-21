@@ -25,4 +25,7 @@ interface CityDao {
     @Query("UPDATE cities SET favorite = CASE favorite WHEN 1 THEN 0 ELSE 1 END WHERE id = :id")
     suspend fun toggleFavourite(id: String)
 
+    @Query("SELECT * FROM cities WHERE id = :id")
+    suspend fun getById(id: String): DBCity
+
 }

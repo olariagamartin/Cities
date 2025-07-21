@@ -22,13 +22,17 @@ fun provideCityRepository(
         override suspend fun toggleFavorite(id: String) {
             // nothing
         }
+
+        override suspend fun getCityById(id: String): Result<City> {
+            return Result.Success(provideCityList().first { it.id == id })
+        }
     }
 }
 
 fun provideCityList() : List<City> {
     return listOf(
-        City("id", "name", "country", Coordinates(1.0, 2.0), false),
-        City("id", "name", "country", Coordinates(1.0, 2.0), false),
-        City("id", "name", "country", Coordinates(1.0, 2.0), false),
+        City("123", "name", "country", Coordinates(1.0, 2.0), false),
+        City("124", "name", "country", Coordinates(1.0, 2.0), false),
+        City("125", "name", "country", Coordinates(1.0, 2.0), false),
     )
 }

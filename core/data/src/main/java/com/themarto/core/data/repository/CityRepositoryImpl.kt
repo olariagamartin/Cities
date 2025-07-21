@@ -26,4 +26,9 @@ class CityRepositoryImpl(
     override suspend fun toggleFavorite(id: String) {
         cityDao.toggleFavourite(id)
     }
+
+    override suspend fun getCityById(id: String): Result<City> {
+        return Result.Success(cityDao.getById(id).toDomain())
+    }
+
 }
