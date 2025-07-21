@@ -14,6 +14,16 @@ import com.themarto.cities.ui.theme.CitiesTheme
 import com.themarto.features.cityList.CitiesScreen
 import com.themarto.features.cityList.MapScreen
 
+object Destinations {
+    const val CITIES = "cities"
+
+    const val MAP = "map"
+    const val MAP_ARGUMENT = "city_id"
+    const val MAP_ROUTE_PATTERN = "$MAP/{$MAP_ARGUMENT}"
+
+    fun mapRoute(cityId: String) = "$MAP/$cityId"
+}
+
 @Composable
 fun MainAppContainer() {
     CitiesTheme {
@@ -22,20 +32,20 @@ fun MainAppContainer() {
             NavHost(
                 modifier = Modifier.padding(innerPadding),
                 navController = navController,
-                startDestination = "cities"
+                startDestination = Destinations.CITIES
             ) {
                 composable(
-                    route = "cities"
+                    route = Destinations.CITIES
                 ) {
                     CitiesScreen(
                         onCityClick = {
-                            navController.navigate("map/$it")
+                            navController.navigate(Destinations.mapRoute(it))
                         }
                     )
                 }
 
                 composable(
-                    route = "map/{city_id}",
+                    route = Destinations.MAP_ROUTE_PATTERN,
                     arguments = listOf(
                         navArgument("city_id") { type = NavType.StringType }
                     )
