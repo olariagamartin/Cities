@@ -53,6 +53,9 @@ dependencies {
     implementation(libs.androidx.material3)
     debugImplementation(libs.androidx.ui.tooling)
 
+    // maps
+    implementation(libs.google.maps.compose)
+
     // koin
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)

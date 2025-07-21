@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -80,6 +81,9 @@ private fun CityListWithMap(
     onCityClick: (String) -> Unit = { },
     selectedId: String?,
 ) {
+    val selectedCity = remember(selectedId) {
+        uiState.cities.find { it.id == selectedId }
+    }
     Row {
         Column(
             modifier = Modifier.weight(1f)
@@ -97,7 +101,7 @@ private fun CityListWithMap(
             modifier = Modifier.weight(1f)
         ) {
             MapContainer(
-                coordinates = uiState.cities.find { it.id == selectedId }?.coordinates
+                coordinates = selectedCity?.coordinates
             )
         }
     }
