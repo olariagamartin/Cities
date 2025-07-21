@@ -169,33 +169,4 @@ class CityListVMTest {
 
    }
 
-    // ------ Test help methods ----------
-    private fun provideCityRepository(
-        getCitiesFiltered: suspend (String, Boolean) -> Result<List<City>> = { prefix, filterFav ->
-            Result.Success(provideCityList()
-                .filter {
-                    it.name.startsWith(prefix).and(!filterFav || it.isFavorite)
-                })
-        }
-    ): CityRepository {
-        return object : CityRepository {
-
-            override suspend fun getCitiesFiltered(prefix: String, filterFav: Boolean): Result<List<City>> {
-                return getCitiesFiltered(prefix, filterFav)
-            }
-
-            override suspend fun toggleFavorite(id: String) {
-                // nothing
-            }
-        }
-    }
-
-    private fun provideCityList() : List<City> {
-        return listOf(
-            City("id", "name", "country", Coordinates(1.0, 2.0), false),
-            City("id", "name", "country", Coordinates(1.0, 2.0), false),
-            City("id", "name", "country", Coordinates(1.0, 2.0), false),
-        )
-    }
-
 }
