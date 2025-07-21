@@ -109,39 +109,48 @@ fun MapContainer(
             )
         }
     } else {
-        val cameraPositionState = rememberCameraPositionState()
-
-        val markerState = remember(coordinates) {
-            MarkerState(position = LatLng(coordinates.latitude, coordinates.longitude))
-        }
-
-        LaunchedEffect(coordinates) {
-            cameraPositionState.animate(
-                update = CameraUpdateFactory.newCameraPosition(
-                    CameraPosition.fromLatLngZoom(
-                        LatLng(coordinates.latitude, coordinates.longitude),
-                        10f
-                    ),
-                ),
-                durationMs = 1000
-            )
-
-        }
-
-        GoogleMap(
-            modifier = modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState,
-            uiSettings = MapUiSettings(zoomControlsEnabled = false),
-            properties = MapProperties(isMyLocationEnabled = false)
-        ) {
-            Marker(
-                state = markerState,
-                title = "Selected city"
-            )
-        }
+        LocationMap(coordinates)
     }
 
 }
+
+@Composable
+private fun LocationMap(
+    coordinates: Coordinates,
+    modifier: Modifier = Modifier,
+) {
+    val cameraPositionState = rememberCameraPositionState()
+
+    val markerState = remember(coordinates) {
+        MarkerState(position = LatLng(coordinates.latitude, coordinates.longitude))
+    }
+
+    LaunchedEffect(coordinates) {
+        cameraPositionState.animate(
+            update = CameraUpdateFactory.newCameraPosition(
+                CameraPosition.fromLatLngZoom(
+                    LatLng(coordinates.latitude, coordinates.longitude),
+                    10f
+                ),
+            ),
+            durationMs = 1000
+        )
+
+    }
+
+    GoogleMap(
+        modifier = modifier.fillMaxSize(),
+        cameraPositionState = cameraPositionState,
+        uiSettings = MapUiSettings(zoomControlsEnabled = false),
+        properties = MapProperties(isMyLocationEnabled = false)
+    ) {
+        Marker(
+            state = markerState,
+            title = "Selected city"
+        )
+    }
+}
+
 
 @Preview
 @Composable
