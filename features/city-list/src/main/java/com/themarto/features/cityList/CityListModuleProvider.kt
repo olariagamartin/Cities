@@ -14,4 +14,12 @@ private val viewModelModule = module {
     viewModel {
         CityListViewModel(get())
     }
+
+    viewModel { (cityId: String) ->
+        CityMapViewModel(
+            cityId = cityId,
+            cityRepository = get()
+        )
+    }
+
 }
