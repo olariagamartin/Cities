@@ -12,7 +12,7 @@ import com.themarto.cities.ui.theme.CitiesTheme
 import com.themarto.features.cityList.CitiesScreen
 
 @Composable
-fun MainAppContainer(modifier: Modifier = Modifier) {
+fun MainAppContainer() {
     CitiesTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             NavHost(
