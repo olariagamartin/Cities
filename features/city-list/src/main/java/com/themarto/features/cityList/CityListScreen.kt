@@ -1,6 +1,7 @@
 package com.themarto.features.cityList
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -27,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -86,7 +89,8 @@ private fun CityListWithMap(
                 onQueryChange = onQueryChange,
                 onFavClick = onFavClick,
                 onFilterFavs = onFilterFavs,
-                onCityClick = onCityClick
+                onCityClick = onCityClick,
+                selectedId = selectedId
             )
         }
         Column(
@@ -105,7 +109,8 @@ fun CitiesScreenContent(
     onQueryChange: (String) -> Unit = {},
     onFavClick: (String) -> Unit = { },
     onFilterFavs: () -> Unit = { },
-    onCityClick: (String) -> Unit = { }
+    onCityClick: (String) -> Unit = { },
+    selectedId: String? = null
 ) {
     Surface(
         modifier = Modifier.fillMaxSize()
@@ -128,7 +133,8 @@ fun CitiesScreenContent(
                 CityList(
                     uiState = uiState,
                     onFavClick = onFavClick,
-                    onCityClick = onCityClick
+                    onCityClick = onCityClick,
+                    selectedId = selectedId
                 )
             }
 
@@ -174,7 +180,8 @@ fun CityFilterBar(
 fun CityList(
     uiState: CityListUIState,
     onFavClick: (String) -> Unit = { },
-    onCityClick: (String) -> Unit = { }
+    onCityClick: (String) -> Unit = { },
+    selectedId: String? = null
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth()
@@ -186,7 +193,8 @@ fun CityList(
                 CityItem(
                     city = city,
                     onFavClick = { onFavClick(city.id) },
-                    onClick = { onCityClick(city.id) }
+                    onClick = { onCityClick(city.id) },
+                    isSelected = city.id == selectedId
                 )
             }
         }
@@ -198,10 +206,19 @@ fun CityList(
 fun CityItem(
     city: City,
     onFavClick: () -> Unit = { },
-    onClick: () -> Unit = { }
+    onClick: () -> Unit = { },
+    isSelected: Boolean = false
 ) {
     Row (
-        modifier = Modifier.clickable(onClick = onClick)
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .background(
+                color = if (isSelected) {
+                    MaterialTheme.colorScheme.primaryContainer
+                } else {
+                    Color.Transparent
+                }
+            )
     ){
         Column(
             modifier = Modifier.weight(1f)
