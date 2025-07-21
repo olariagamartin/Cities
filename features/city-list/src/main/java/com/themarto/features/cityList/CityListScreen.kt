@@ -49,26 +49,14 @@ fun CitiesScreen(
     var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
 
     if (isLandscape) {
-        Row {
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                CitiesScreenContent(
-                    uiState = uiState,
-                    onQueryChange = viewModel::onQueryChanged,
-                    onFavClick = viewModel::onFavClick,
-                    onFilterFavs = viewModel::onFilterFavClick,
-                    onCityClick = { cityId -> selectedId = cityId }
-                )
-            }
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                MapContainer(
-                    coordinates = uiState.cities.find { it.id == selectedId }?.coordinates
-                )
-            }
-        }
+        CityListWithMap(
+            uiState = uiState,
+            onQueryChange = viewModel::onQueryChanged,
+            onFavClick = viewModel::onFavClick,
+            onFilterFavs = viewModel::onFilterFavClick,
+            onCityClick = { cityId -> selectedId = cityId },
+            selectedId = selectedId
+        )
     } else {
         CitiesScreenContent(
             uiState = uiState,
@@ -77,6 +65,37 @@ fun CitiesScreen(
             onFilterFavs = viewModel::onFilterFavClick,
             onCityClick = navigateToCityMap
         )
+    }
+}
+
+@Composable
+private fun CityListWithMap(
+    uiState: CityListUIState,
+    onQueryChange: (String) -> Unit = {},
+    onFavClick: (String) -> Unit = { },
+    onFilterFavs: () -> Unit = { },
+    onCityClick: (String) -> Unit = { },
+    selectedId: String?,
+) {
+    Row {
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            CitiesScreenContent(
+                uiState = uiState,
+                onQueryChange = onQueryChange,
+                onFavClick = onFavClick,
+                onFilterFavs = onFilterFavs,
+                onCityClick = onCityClick
+            )
+        }
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            MapContainer(
+                coordinates = uiState.cities.find { it.id == selectedId }?.coordinates
+            )
+        }
     }
 }
 
