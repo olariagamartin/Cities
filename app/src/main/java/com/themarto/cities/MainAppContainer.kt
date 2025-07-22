@@ -17,14 +17,13 @@ import com.themarto.features.cityList.MapScreen
 
 object Destinations {
     const val CITIES = "cities"
+    const val CITY_ID_ARG = "city_id"
 
     const val MAP = "map"
-    const val MAP_ARGUMENT = "city_id"
-    const val MAP_ROUTE_PATTERN = "$MAP/{$MAP_ARGUMENT}"
+    const val MAP_ROUTE_PATTERN = "$MAP/{$CITY_ID_ARG}"
 
     const val CITY_DETAILS = "cityDetails"
-    const val CITY_DETAILS_ARGUMENT = "city_id"
-    const val CITY_DETAILS_ROUTE_PATTERN = "$CITY_DETAILS/{$CITY_DETAILS_ARGUMENT}"
+    const val CITY_DETAILS_ROUTE_PATTERN = "$CITY_DETAILS/{$CITY_ID_ARG}"
 
     fun mapRoute(cityId: String) = "$MAP/$cityId"
 
@@ -57,24 +56,24 @@ fun MainAppContainer() {
                 composable(
                     route = Destinations.MAP_ROUTE_PATTERN,
                     arguments = listOf(
-                        navArgument("city_id") { type = NavType.StringType }
+                        navArgument(Destinations.CITY_ID_ARG) { type = NavType.StringType }
                     )
                 ) { backStackEntry ->
                     MapScreen(
                         onNavigateBack = { navController.popBackStack() },
-                        cityId = backStackEntry.arguments?.getString("city_id")!!
+                        cityId = backStackEntry.arguments?.getString(Destinations.CITY_ID_ARG)!!
                     )
                 }
 
                 composable(
                     route = Destinations.CITY_DETAILS_ROUTE_PATTERN,
                     arguments = listOf(
-                        navArgument("city_id") { type = NavType.StringType }
+                        navArgument(Destinations.CITY_ID_ARG) { type = NavType.StringType }
                     )
                 ) { backStackEntry ->
                     CityDetailsScreen(
                         onNavigateBack = { navController.popBackStack() },
-                        cityId = backStackEntry.arguments?.getString("city_id")!!
+                        cityId = backStackEntry.arguments?.getString(Destinations.CITY_ID_ARG)!!
                     )
                 }
             }
