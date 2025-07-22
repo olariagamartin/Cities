@@ -11,12 +11,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -205,13 +208,17 @@ fun CityList(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
         ) {
             items(uiState.cities) { city ->
-                CityItem(
-                    city = city,
-                    onFavClick = { onFavClick(city.id) },
-                    onClick = { onCityClick(city.id) },
-                    onInfoClick = { onInfoClick(city.id) },
-                    isSelected = city.id == selectedId
-                )
+                Column {
+                    CityItem(
+                        city = city,
+                        onFavClick = { onFavClick(city.id) },
+                        onClick = { onCityClick(city.id) },
+                        onInfoClick = { onInfoClick(city.id) },
+                        isSelected = city.id == selectedId
+                    )
+                    HorizontalDivider()
+                }
+
             }
         }
     }
@@ -229,12 +236,14 @@ fun CityItem(
     Row (
         modifier = Modifier
             .clickable(onClick = onClick)
+            .padding(2.dp)
             .background(
                 color = if (isSelected) {
                     MaterialTheme.colorScheme.primaryContainer
                 } else {
                     Color.Transparent
-                }
+                },
+                shape = RoundedCornerShape(4.dp),
             )
     ){
         Column(
@@ -243,10 +252,13 @@ fun CityItem(
             Text(
                 text = "${city.name}, ${city.country}",
                 fontSize = 18.sp,
+                fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(2.dp)
             )
             Text(
                 text = "${city.coordinates.latitude}, ${city.coordinates.longitude}",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Light,
                 modifier = Modifier.padding(2.dp)
             )
         }
@@ -256,7 +268,8 @@ fun CityItem(
         ) {
             Icon(
                 imageVector = Icons.Outlined.Info,
-                contentDescription = null
+                contentDescription = null,
+                tint = Color.Blue
             )
         }
         IconButton(
@@ -265,11 +278,20 @@ fun CityItem(
         ) {
             Icon(
                 imageVector = if (city.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                contentDescription = null
+                contentDescription = null,
+                tint = Color.Red
             )
         }
     }
+}
 
+@Preview(showBackground = true)
+@Composable
+private fun CityItemPreview() {
+    CityItem(
+        city = City("id", "Cordoba", "AR", Coordinates(1.0, 2.0), true),
+        isSelected = true
+    )
 }
 
 @Preview
