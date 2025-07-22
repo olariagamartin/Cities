@@ -1,6 +1,8 @@
 package com.themarto.features.cityDetails
 
 import android.util.Log
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -14,45 +16,71 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.themarto.core.domain.City
+import com.themarto.core.domain.Coordinates
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CityDetailsScreen(
     onNavigateBack: () -> Unit = { },
     cityId: String,
-    viewModel: CityDetailViewModel = koinViewModel { parametersOf(cityId) }
+    viewModel: CityDetailViewModel = koinViewModel { parametersOf(cityId) },
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Log.d("CityDetailsScreen", "uiState: $uiState")
-
-    CenterAlignedTopAppBar(
-        modifier = Modifier,
-        title = {
-            Text(
-                text = "City Detail"
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = onNavigateBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null
-                )
-            }
-        }
+    CityDetailsScreenContent(
+        onBackClick = onNavigateBack,
+        uiState = uiState
     )
-    Surface {
-        Text(cityId)
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun CityDetailsScreenContent(
+    onBackClick: () -> Unit = { },
+    uiState: UiState,
+) {
+    Column {
+        CenterAlignedTopAppBar(
+            modifier = Modifier,
+            title = {
+                uiState.city?.let {
+                    Text(
+                        text = "${it.name}, ${it.country}"
+                    )
+                }
+            },
+            navigationIcon = {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null
+                    )
+                }
+            }
+        )
+        Surface(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text("City Data")
+        }
     }
+
 }
 
 @Preview
 @Composable
 private fun CityDetailsScreenPreview() {
-    CityDetailsScreen(
-        cityId = "123"
+    CityDetailsScreenContent(
+        uiState = UiState(
+            city = City(
+                id = "123",
+                name = "Name",
+                country = "CT",
+                coordinates = Coordinates(1.0, 2.0),
+                isFavorite = true
+            )
+        )
     )
 }
