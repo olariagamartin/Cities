@@ -22,6 +22,8 @@ object Destinations {
     const val MAP_ARGUMENT = "city_id"
     const val MAP_ROUTE_PATTERN = "$MAP/{$MAP_ARGUMENT}"
 
+    const val CITY_DETAILS = "cityDetails"
+
     fun mapRoute(cityId: String) = "$MAP/$cityId"
 }
 
@@ -43,7 +45,7 @@ fun MainAppContainer() {
                             navController.navigate(Destinations.mapRoute(cityId))
                         },
                         navigateToCityDetails = {
-                            navController.navigate("cityDetails")
+                            navController.navigate(Destinations.CITY_DETAILS)
                         }
                     )
                 }
@@ -61,7 +63,7 @@ fun MainAppContainer() {
                 }
 
                 composable(
-                    route = "cityDetails"
+                    route = Destinations.CITY_DETAILS
                 ) {
                     CityDetailsScreen(
                         onNavigateBack = { navController.popBackStack() }
