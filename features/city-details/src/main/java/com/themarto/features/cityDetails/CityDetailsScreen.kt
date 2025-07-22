@@ -1,10 +1,11 @@
 package com.themarto.features.cityDetails
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,6 +32,7 @@ fun CityDetailsScreen(
 
     CityDetailsScreenContent(
         onBackClick = onNavigateBack,
+        onFavoriteClick = viewModel::onFavoriteClick,
         uiState = uiState
     )
 }
@@ -39,22 +41,29 @@ fun CityDetailsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 private fun CityDetailsScreenContent(
     onBackClick: () -> Unit = { },
+    onFavoriteClick: () -> Unit = { },
     uiState: UiState,
 ) {
     Column {
         CenterAlignedTopAppBar(
             modifier = Modifier,
             title = {
-                uiState.city?.let {
-                    Text(
-                        text = "${it.name}, ${it.country}"
-                    )
-                }
+                Text(
+                    text = "Details"
+                )
             },
             navigationIcon = {
                 IconButton(onClick = onBackClick) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null
+                    )
+                }
+            },
+            actions = {
+                IconButton(onClick = onFavoriteClick) {
+                    Icon(
+                        imageVector = if (uiState.city?.isFavorite == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = null
                     )
                 }
