@@ -7,6 +7,9 @@ import androidx.room.Query
 @Dao
 interface CityDao {
 
+    @Query("SELECT 1 FROM cities LIMIT 1")
+    suspend fun hasAny(): Int?
+
     @Insert
     suspend fun insertAll(cities: List<DBCity>)
 

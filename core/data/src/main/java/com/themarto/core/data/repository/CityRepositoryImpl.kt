@@ -12,15 +12,20 @@ class CityRepositoryImpl(
 ) : CityRepository {
 
     override suspend fun getCitiesFiltered(prefix: String, filterFav: Boolean): Result<List<City>> {
-        val dbResult = cityDao.getFiltered(prefix, filterFav)
-        if (dbResult.isEmpty() && prefix.isEmpty()) {
+        if (cityDao.hasAny() == null) {
             Log.d("CityRepository", "DB is empty, fetching from API")
             val apiResult = cityApi.getCities()
             cityDao.insertAll(apiResult.map { it.toDB() })
-            return Result.Success(cityDao.getAll().map { it.toDomain() })
+            return Result.Success(
+                cityDao.getFiltered(prefix, filterFav)
+                    .map { it.toDomain() }
+            )
         }
         Log.d("CityRepository", "DB is not empty")
-        return Result.Success(dbResult.map { it.toDomain() })
+        return Result.Success(
+            cityDao.getFiltered(prefix, filterFav)
+                .map { it.toDomain() }
+        )
     }
 
     override suspend fun toggleFavorite(id: String) {
