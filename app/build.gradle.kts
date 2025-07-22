@@ -53,6 +53,7 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
     implementation(project(":features:city-list"))
+    implementation(project(":features:city-details"))
 
     // android
     implementation(libs.androidx.core.ktx)

@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,7 +44,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun CitiesScreen(
     viewModel: CityListViewModel = koinViewModel(),
-    navigateToCityMap: (String) -> Unit = { }
+    navigateToCityMap: (String) -> Unit = { },
+    navigateToCityDetails: (String) -> Unit = { },
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -59,6 +61,7 @@ fun CitiesScreen(
             onFavClick = viewModel::onFavClick,
             onFilterFavs = viewModel::onFilterFavClick,
             onCityClick = { cityId -> selectedId = cityId },
+            onInfoClick = navigateToCityDetails,
             selectedId = selectedId
         )
     } else {
@@ -67,7 +70,8 @@ fun CitiesScreen(
             onQueryChange = viewModel::onQueryChanged,
             onFavClick = viewModel::onFavClick,
             onFilterFavs = viewModel::onFilterFavClick,
-            onCityClick = navigateToCityMap
+            onCityClick = navigateToCityMap,
+            onInfoClick = navigateToCityDetails,
         )
     }
 }
@@ -79,6 +83,7 @@ private fun CityListWithMap(
     onFavClick: (String) -> Unit = { },
     onFilterFavs: () -> Unit = { },
     onCityClick: (String) -> Unit = { },
+    onInfoClick: (String) -> Unit = { },
     selectedId: String?,
 ) {
     val selectedCity = remember(selectedId) {
@@ -94,6 +99,7 @@ private fun CityListWithMap(
                 onFavClick = onFavClick,
                 onFilterFavs = onFilterFavs,
                 onCityClick = onCityClick,
+                onInfoClick = onInfoClick,
                 selectedId = selectedId
             )
         }
@@ -114,6 +120,7 @@ fun CitiesScreenContent(
     onFavClick: (String) -> Unit = { },
     onFilterFavs: () -> Unit = { },
     onCityClick: (String) -> Unit = { },
+    onInfoClick: (String) -> Unit = { },
     selectedId: String? = null
 ) {
     Surface(
@@ -138,6 +145,7 @@ fun CitiesScreenContent(
                     uiState = uiState,
                     onFavClick = onFavClick,
                     onCityClick = onCityClick,
+                    onInfoClick = onInfoClick,
                     selectedId = selectedId
                 )
             }
@@ -169,7 +177,9 @@ fun CityFilterBar(
             )
             IconButton(
                 onClick = onFilterFavs,
-                modifier = Modifier.padding(2.dp).align(Alignment.CenterVertically)
+                modifier = Modifier
+                    .padding(2.dp)
+                    .align(Alignment.CenterVertically)
             ) {
                 Icon(
                     imageVector = if (filterFavs) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
@@ -185,6 +195,7 @@ fun CityList(
     uiState: CityListUIState,
     onFavClick: (String) -> Unit = { },
     onCityClick: (String) -> Unit = { },
+    onInfoClick: (String) -> Unit = { },
     selectedId: String? = null
 ) {
     Surface(
@@ -198,6 +209,7 @@ fun CityList(
                     city = city,
                     onFavClick = { onFavClick(city.id) },
                     onClick = { onCityClick(city.id) },
+                    onInfoClick = { onInfoClick(city.id) },
                     isSelected = city.id == selectedId
                 )
             }
@@ -211,6 +223,7 @@ fun CityItem(
     city: City,
     onFavClick: () -> Unit = { },
     onClick: () -> Unit = { },
+    onInfoClick: () -> Unit = { },
     isSelected: Boolean = false
 ) {
     Row (
@@ -235,6 +248,15 @@ fun CityItem(
             Text(
                 text = "${city.coordinates.latitude}, ${city.coordinates.longitude}",
                 modifier = Modifier.padding(2.dp)
+            )
+        }
+        IconButton(
+            onClick = onInfoClick,
+            modifier = Modifier.padding(2.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Info,
+                contentDescription = null
             )
         }
         IconButton(

@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.themarto.cities.ui.theme.CitiesTheme
+import com.themarto.features.cityDetails.CityDetailsScreen
 import com.themarto.features.cityList.CitiesScreen
 import com.themarto.features.cityList.MapScreen
 
@@ -40,6 +41,9 @@ fun MainAppContainer() {
                     CitiesScreen(
                         navigateToCityMap = { cityId ->
                             navController.navigate(Destinations.mapRoute(cityId))
+                        },
+                        navigateToCityDetails = {
+                            navController.navigate("cityDetails")
                         }
                     )
                 }
@@ -53,6 +57,14 @@ fun MainAppContainer() {
                     MapScreen(
                         onNavigateBack = { navController.popBackStack() },
                         cityId = backStackEntry.arguments?.getString("city_id")!!
+                    )
+                }
+
+                composable(
+                    route = "cityDetails"
+                ) {
+                    CityDetailsScreen(
+                        onNavigateBack = { navController.popBackStack() }
                     )
                 }
             }
