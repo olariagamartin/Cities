@@ -29,7 +29,10 @@ class CityDetailVMTest {
     fun `A0_WHEN ViewModel is initialized THEN city is null`() = runTest {
         val vm = CityDetailViewModel()
 
-        assertEquals(true, true)
+        vm.uiState.test {
+            assertEquals(null, awaitItem().city)
+            cancelAndIgnoreRemainingEvents()
+        }
 
     }
 }
