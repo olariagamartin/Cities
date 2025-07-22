@@ -34,4 +34,11 @@ class CityDetailViewModel(
             }
         }
     }
+
+    fun onFavoriteClick(id: String) {
+        viewModelScope.launch {
+            cityRepository.toggleFavorite(id)
+            loadCity()
+        }
+    }
 }

@@ -17,6 +17,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.spy
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 
 @ExperimentalCoroutinesApi
@@ -75,6 +76,36 @@ class CityDetailVMTest {
             assertEquals(provideCityList().first(), awaitItem().city)
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    @Test
+    fun `C0_WHEN onFavoriteClick THEN toggleFavorite is called`() = runTest {
+        val repo = spy(provideCityRepository())
+        val vm = CityDetailViewModel(
+            cityRepository = repo,
+            cityId = "123"
+        )
+
+        vm.onFavoriteClick("123")
+
+        advanceUntilIdle()
+
+        verify(repo).toggleFavorite("123")
+    }
+
+    @Test
+    fun `C1_WHEN onFavoriteClick THEN getCityById is called again`() = runTest {
+        val repo = spy(provideCityRepository())
+        val vm = CityDetailViewModel(
+            cityRepository = repo,
+            cityId = "123"
+        )
+
+        vm.onFavoriteClick("123")
+
+        advanceUntilIdle()
+
+        verify(repo, times(2)).getCityById("123")
     }
 
     // ----------- helper functions --------------------
