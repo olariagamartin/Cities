@@ -146,7 +146,15 @@ fun CitiesScreenContent(
                 ) {
                     CircularProgressIndicator()
                 }
-            } else {
+            } else if (uiState.cities.isEmpty()) {
+                Box(
+                    Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No cities found")
+                }
+            }
+            else {
                 CityList(
                     uiState = uiState,
                     onFavClick = onFavClick,
