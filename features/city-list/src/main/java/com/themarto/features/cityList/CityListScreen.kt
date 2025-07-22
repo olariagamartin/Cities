@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,12 +35,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.themarto.core.domain.City
 import com.themarto.core.domain.Coordinates
 import org.koin.androidx.compose.koinViewModel
@@ -246,8 +249,14 @@ fun CityItem(
                 shape = RoundedCornerShape(4.dp),
             )
     ){
+        AsyncImage(
+            modifier = Modifier.size(48.dp).align(Alignment.CenterVertically),
+            model = "https://flagsapi.com/${city.country}/flat/64.png",
+            contentDescription = "Recipe image",
+            placeholder = ColorPainter(Color.Gray),
+        )
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f).padding(start = 8.dp)
         ) {
             Text(
                 text = "${city.name}, ${city.country}",
@@ -269,7 +278,7 @@ fun CityItem(
             Icon(
                 imageVector = Icons.Outlined.Info,
                 contentDescription = null,
-                tint = Color.Blue
+                tint = Color.LightGray
             )
         }
         IconButton(

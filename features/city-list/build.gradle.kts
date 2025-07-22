@@ -56,6 +56,9 @@ dependencies {
     // maps
     implementation(libs.google.maps.compose)
 
+    // coil
+    implementation(libs.coil.compose)
+
     // koin
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
