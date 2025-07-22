@@ -35,9 +35,9 @@ class CityDetailViewModel(
         }
     }
 
-    fun onFavoriteClick(id: String) {
+    fun onFavoriteClick() {
         viewModelScope.launch {
-            cityRepository.toggleFavorite(id)
+            cityRepository.toggleFavorite(cityId)
             loadCity()
         }
     }

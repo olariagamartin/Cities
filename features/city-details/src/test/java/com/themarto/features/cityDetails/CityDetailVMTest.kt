@@ -86,7 +86,7 @@ class CityDetailVMTest {
             cityId = "123"
         )
 
-        vm.onFavoriteClick("123")
+        vm.onFavoriteClick()
 
         advanceUntilIdle()
 
@@ -101,7 +101,7 @@ class CityDetailVMTest {
             cityId = "123"
         )
 
-        vm.onFavoriteClick("123")
+        vm.onFavoriteClick()
 
         advanceUntilIdle()
 
