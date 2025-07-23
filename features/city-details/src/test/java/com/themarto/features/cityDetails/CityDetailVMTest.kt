@@ -7,6 +7,8 @@ import com.themarto.core.domain.City
 import com.themarto.core.domain.Coordinates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -111,25 +113,22 @@ class CityDetailVMTest {
     // ----------- helper functions --------------------
     // duplicated: could be in a separate test module
     private fun provideCityRepository(
-        getCitiesFiltered: suspend (String, Boolean) -> Result<List<City>> = { prefix, filterFav ->
-            Result.Success(provideCityList()
-                .filter {
-                    it.name.startsWith(prefix).and(!filterFav || it.isFavorite)
-                })
+        getCitiesFiltered: Flow<Result<List<City>>> = flow {
+            emit(Result.Success(provideCityList()))
         }
     ): CityRepository {
         return object : CityRepository {
 
-            override suspend fun getCitiesFiltered(prefix: String, filterFav: Boolean): Result<List<City>> {
-                return getCitiesFiltered(prefix, filterFav)
+            override suspend fun getCitiesFiltered(prefix: String, filterFav: Boolean): Flow<Result<List<City>>> {
+                return getCitiesFiltered
             }
 
             override suspend fun toggleFavorite(id: String) {
                 // nothing
             }
 
-            override suspend fun getCityById(id: String): Result<City> {
-                return Result.Success(provideCityList().first { it.id == id })
+            override suspend fun getCityById(id: String): Flow<Result<City>> = flow {
+                emit(Result.Success(provideCityList().first { it.id == id }))
             }
         }
     }

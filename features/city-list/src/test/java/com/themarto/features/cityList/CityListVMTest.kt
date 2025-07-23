@@ -7,6 +7,7 @@ import com.themarto.core.domain.City
 import com.themarto.core.domain.Coordinates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -59,8 +60,11 @@ class CityListVMTest {
 
     @Test
     fun `B1_WHEN getCitiesFiltered respond error THEN display error`() = runTest {
+        val citiesFilteredFlow = flow<Result<List<City>>> { emit(Result.Error("error")) }
         val viewModel = CityListViewModel(
-            provideCityRepository { _, _ -> Result.Error("error") }
+            provideCityRepository(
+                getCitiesFiltered = citiesFilteredFlow
+            )
         )
 
         viewModel.uiState.test {
@@ -129,19 +133,6 @@ class CityListVMTest {
         advanceUntilIdle()
 
         verify(repo).toggleFavorite(city.id)
-
-    }
-
-    @Test
-    fun `D1_WHEN onFavClick is called THEN getCitiesFiltered is called again`() = runTest {
-        val repo = spy(provideCityRepository())
-        val vm = CityListViewModel(repo)
-
-        val city = provideCityList().first()
-        vm.onFavClick(city.id)
-        advanceUntilIdle()
-
-        verify(repo, times(2)).getCitiesFiltered(any(), any())
 
     }
 

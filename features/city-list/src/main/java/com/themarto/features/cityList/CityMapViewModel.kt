@@ -3,11 +3,13 @@ package com.themarto.features.cityList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.themarto.core.data.repository.CityRepository
+import com.themarto.core.data.utils.Result
 import com.themarto.core.data.utils.isSuccess
 import com.themarto.core.domain.City
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -29,15 +31,13 @@ class CityMapViewModel(
 
     private fun loadCity() {
         viewModelScope.launch {
-            val result = cityRepository.getCityById(cityId)
-            if (result.isSuccess()) {
-                _uiState.update {
-                    it.copy(
-                        city = result.data
-                    )
+            cityRepository.getCityById(cityId).collectLatest { result ->
+                if (result.isSuccess()) {
+                    _uiState.update {
+                        it.copy(city = result.data)
+                    }
                 }
             }
-
         }
     }
 }

@@ -6,9 +6,12 @@ import com.themarto.core.data.repository.CityRepository
 import com.themarto.core.data.utils.isError
 import com.themarto.core.data.utils.isSuccess
 import com.themarto.core.domain.City
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -20,9 +23,19 @@ data class CityListUIState(
     val loading: Boolean = false
 )
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class CityListViewModel(
     private val cityRepository: CityRepository
 ) : ViewModel() {
+
+    private val query = MutableStateFlow("")
+    private val filterFav = MutableStateFlow(false)
+
+    private val cityListResponse = combine(query, filterFav) { query, filterFav ->
+        query to filterFav
+    }.flatMapLatest { (query, filterFav) ->
+        cityRepository.getCitiesFiltered(query, filterFav)
+    }
 
     private val _uiState = MutableStateFlow(CityListUIState())
     val uiState: StateFlow<CityListUIState> = _uiState.asStateFlow()
@@ -37,28 +50,22 @@ class CityListViewModel(
                 loading = true
             )
         }
-        refreshCityList()
-    }
-
-    private fun refreshCityList(
-        searchPrefix: String = _uiState.value.query,
-        filterFav: Boolean = _uiState.value.filterFav
-    ) {
         viewModelScope.launch {
-            val result = cityRepository.getCitiesFiltered(searchPrefix, filterFav)
-            if (result.isSuccess()) {
-                _uiState.update {
-                    it.copy(
-                        cities = result.data,
-                        loading = false
-                    )
-                }
-            } else if (result.isError()) {
-                _uiState.update {
-                    it.copy(
-                        error = result.error,
-                        loading = false
-                    )
+            cityListResponse.collect { result ->
+                if (result.isSuccess()) {
+                    _uiState.update {
+                        it.copy(
+                            cities = result.data,
+                            loading = false
+                            )
+                    }
+                } else if (result.isError()) {
+                    _uiState.update {
+                        it.copy(
+                            error = result.error,
+                            loading = false
+                        )
+                    }
                 }
             }
         }
@@ -71,7 +78,7 @@ class CityListViewModel(
                 loading = true
             )
         }
-        refreshCityList(searchPrefix)
+        query.value = searchPrefix
     }
 
 
@@ -79,7 +86,6 @@ class CityListViewModel(
     fun onFavClick(id: String) {
         viewModelScope.launch {
             cityRepository.toggleFavorite(id)
-            refreshCityList(_uiState.value.query)
         }
     }
 
@@ -90,10 +96,7 @@ class CityListViewModel(
                 loading = true
             )
         }
-        refreshCityList(
-            _uiState.value.query,
-            _uiState.value.filterFav
-        )
+        filterFav.value = !(filterFav.value)
     }
 
 }

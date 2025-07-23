@@ -3,6 +3,7 @@ package com.themarto.core.data.database
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CityDao {
@@ -20,12 +21,12 @@ interface CityDao {
         ORDER BY name, country
     """
     )
-    suspend fun getFiltered(namePrefix: String, onlyFavs: Boolean = false): List<DBCity>
+    fun getFiltered(namePrefix: String, onlyFavs: Boolean = false): Flow<List<DBCity>>
 
     @Query("UPDATE cities SET favorite = CASE favorite WHEN 1 THEN 0 ELSE 1 END WHERE id = :id")
     suspend fun toggleFavourite(id: String)
 
     @Query("SELECT * FROM cities WHERE id = :id")
-    suspend fun getById(id: String): DBCity
+    fun getById(id: String): Flow<DBCity>
 
 }
