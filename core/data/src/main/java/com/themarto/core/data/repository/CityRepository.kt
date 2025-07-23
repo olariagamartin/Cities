@@ -6,9 +6,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface CityRepository {
 
-    suspend fun getCitiesFiltered(prefix: String, filterFav: Boolean = false): Flow<Result<List<City>>>
+    fun getCitiesFiltered(prefix: String, filterFav: Boolean = false): Flow<Result<List<City>>>
 
     suspend fun toggleFavorite(id: String)
 
-    suspend fun getCityById(id: String): Flow<Result<City>>
+    fun getCityById(id: String): Flow<Result<City>>
 }

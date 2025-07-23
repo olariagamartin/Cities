@@ -15,7 +15,7 @@ fun provideCityRepository(
 ): CityRepository {
     return object : CityRepository {
 
-        override suspend fun getCitiesFiltered(prefix: String, filterFav: Boolean): Flow<Result<List<City>>> {
+        override fun getCitiesFiltered(prefix: String, filterFav: Boolean): Flow<Result<List<City>>> {
             return getCitiesFiltered
         }
 
@@ -23,7 +23,7 @@ fun provideCityRepository(
             // nothing
         }
 
-        override suspend fun getCityById(id: String): Flow<Result<City>> = flow {
+        override fun getCityById(id: String): Flow<Result<City>> = flow {
             emit(Result.Success(provideCityList().first { it.id == id }))
         }
     }
