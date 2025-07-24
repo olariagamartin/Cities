@@ -75,7 +75,13 @@ googleMapsApiKey=YOUR_GOOGLE_MAPS_KEY
 
 ## 📽️ Screenshots
 
+|City List|City List Search|City List Favs|
+|---|---|---|
+|![](screenshots/city_list.png)|![](screenshots/city_list_search.png)|![](screenshots/city_list_favs.png)|
 
+|City Map|City Detail|City List Landscape|
+|---|---|---|
+|![](screenshots/city_map.png)|![](screenshots/city_detail.png)|![](screenshots/city_list_landscape.png)|
 <br>
 
 -----
