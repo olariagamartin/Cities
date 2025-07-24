@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -148,7 +149,8 @@ fun CitiesScreenContent(
                     onFavClick = onFavClick,
                     onCityClick = onCityClick,
                     onInfoClick = onInfoClick,
-                    selectedId = selectedId
+                    selectedId = selectedId,
+                    loading = uiState.loading
                 )
             }
 
@@ -161,7 +163,7 @@ fun CityFilterBar(
     query: String,
     onQueryChange: (String) -> Unit,
     onFilterFavs: () -> Unit = { },
-    filterFavs: Boolean = false
+    filterFavs: Boolean = false,
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
@@ -200,30 +202,41 @@ fun CityList(
     onFavClick: (String) -> Unit = { },
     onCityClick: (City) -> Unit = { },
     onInfoClick: (String) -> Unit = { },
-    selectedId: String? = null
+    selectedId: String? = null,
+    loading: Boolean = false
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth()
     ) {
-        LazyColumn(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-        ) {
-            items(cities.itemCount) { index ->
-                Column {
-                    cities[index]?.let {
-                        CityItem(
-                            city = it,
-                            onFavClick = { onFavClick(it.id) },
-                            onClick = { onCityClick(it) },
-                            onInfoClick = { onInfoClick(it.id) },
-                            isSelected = it.id == selectedId
-                        )
+        if (loading) {
+            Box(
+                Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            ) {
+                items(cities.itemCount) { index ->
+                    Column {
+                        cities[index]?.let {
+                            CityItem(
+                                city = it,
+                                onFavClick = { onFavClick(it.id) },
+                                onClick = { onCityClick(it) },
+                                onInfoClick = { onInfoClick(it.id) },
+                                isSelected = it.id == selectedId
+                            )
+                        }
+                        HorizontalDivider()
                     }
-                    HorizontalDivider()
-                }
 
+                }
             }
         }
+
     }
 
 }
