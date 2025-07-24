@@ -161,7 +161,7 @@ fun CityFilterBar(
     filterFavs: Boolean = false
 ) {
     Surface(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
     ) {
         Row {
             OutlinedTextField(
@@ -172,7 +172,8 @@ fun CityFilterBar(
                     .padding(start = 12.dp, top = 8.dp, bottom = 8.dp)
                     .weight(1f),
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                placeholder = { Text("Search city…") }
+                placeholder = { Text("Search city…") },
+                shape = RoundedCornerShape(24.dp)
             )
             IconButton(
                 onClick = onFilterFavs,
@@ -182,7 +183,8 @@ fun CityFilterBar(
             ) {
                 Icon(
                     imageVector = if (filterFavs) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    contentDescription = null
+                    contentDescription = null,
+                    modifier = Modifier.size(36.dp)
                 )
             }
         }
