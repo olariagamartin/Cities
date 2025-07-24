@@ -307,20 +307,12 @@ private fun IndexFilterBarPreview() {
     )
 }
 
-// todo: check
-/*
 @Preview
 @Composable
 private fun CityListPreview() {
+    val lazyItems = previewPagingFlow().collectAsLazyPagingItems()
     CityList(
-        uiState = CityListUIState(
-            cities = listOf(
-                City("id", "Name", "CT", Coordinates(1.0, 2.0), true),
-                City("id", "Name", "CT", Coordinates(1.0, 2.0), false),
-                City("id", "Name", "CT", Coordinates(1.0, 2.0), true),
-                City("id", "Name", "CT", Coordinates(1.0, 2.0), false),
-            )
-        )
+        cities = lazyItems
     )
 
 }
@@ -328,14 +320,10 @@ private fun CityListPreview() {
 @Preview
 @Composable
 private fun CityScreenPreview() {
+    val lazyItems = previewPagingFlow()
     CitiesScreenContent(
         uiState = CityListUIState(
-            cities = listOf(
-                City("id", "Name", "CT", Coordinates(1.0, 2.0), true),
-                City("id", "Name", "CT", Coordinates(1.0, 2.0), false),
-                City("id", "Name", "CT", Coordinates(1.0, 2.0), true),
-                City("id", "Name", "CT", Coordinates(1.0, 2.0), false),
-            )
-        ),
+            cities = lazyItems
+        )
     )
-}*/
+}
