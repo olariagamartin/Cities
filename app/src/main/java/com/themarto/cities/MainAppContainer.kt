@@ -1,5 +1,8 @@
 package com.themarto.cities
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideIn
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -57,7 +60,19 @@ fun MainAppContainer() {
                     route = Destinations.MAP_ROUTE_PATTERN,
                     arguments = listOf(
                         navArgument(Destinations.CITY_ID_ARG) { type = NavType.StringType }
-                    )
+                    ),
+                    enterTransition = {
+                        slideIntoContainer(
+                            animationSpec = tween(durationMillis = 500),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Left
+                        )
+                    },
+                    exitTransition = {
+                        slideOutOfContainer(
+                            animationSpec = tween(durationMillis = 500),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Right
+                        )
+                    }
                 ) { backStackEntry ->
                     MapScreen(
                         onNavigateBack = { navController.popBackStack() },
@@ -69,7 +84,19 @@ fun MainAppContainer() {
                     route = Destinations.CITY_DETAILS_ROUTE_PATTERN,
                     arguments = listOf(
                         navArgument(Destinations.CITY_ID_ARG) { type = NavType.StringType }
-                    )
+                    ),
+                    enterTransition = {
+                        slideIntoContainer(
+                            animationSpec = tween(durationMillis = 500),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Up
+                        )
+                    },
+                    exitTransition = {
+                        slideOutOfContainer(
+                            animationSpec = tween(durationMillis = 500),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Down
+                        )
+                    }
                 ) { backStackEntry ->
                     CityDetailsScreen(
                         onNavigateBack = { navController.popBackStack() },
