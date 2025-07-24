@@ -113,20 +113,7 @@ class CityListVMTest {
     @Test
     fun `B3_WHEN Paging Data is not loading THEN append is NotLoading`() = runTest {
         val vm = CityListViewModel(
-            provideCityRepository(
-                getCitiesFiltered = flowOf (
-                    Result.Success(
-                        PagingData.from(
-                            data = provideCityList(),
-                            sourceLoadStates = LoadStates(
-                                refresh = LoadState.NotLoading(true),
-                                prepend = LoadState.NotLoading(true),
-                                append = LoadState.NotLoading(true)
-                            )
-                        )
-                    )
-                )
-            )
+            provideCityRepository()
         )
         val pagingDataPresenter = object : PagingDataPresenter<City>() {
             override suspend fun presentPagingDataEvent(event: PagingDataEvent<City>) { }
