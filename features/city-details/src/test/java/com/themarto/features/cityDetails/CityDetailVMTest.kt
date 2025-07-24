@@ -1,5 +1,6 @@
 package com.themarto.features.cityDetails
 
+import androidx.paging.PagingData
 import app.cash.turbine.test
 import com.themarto.core.data.repository.CityRepository
 import com.themarto.core.data.utils.Result
@@ -18,6 +19,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.spy
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
@@ -112,15 +114,11 @@ class CityDetailVMTest {
 
     // ----------- helper functions --------------------
     // duplicated: could be in a separate test module
-    private fun provideCityRepository(
-        getCitiesFiltered: Flow<Result<List<City>>> = flow {
-            emit(Result.Success(provideCityList()))
-        }
-    ): CityRepository {
+    private fun provideCityRepository(): CityRepository {
         return object : CityRepository {
 
-            override fun getCitiesFiltered(prefix: String, filterFav: Boolean): Flow<Result<List<City>>> {
-                return getCitiesFiltered
+            override fun getCitiesFiltered(prefix: String, filterFav: Boolean): Flow<Result<PagingData<City>>> {
+                return mock()
             }
 
             override suspend fun toggleFavorite(id: String) {

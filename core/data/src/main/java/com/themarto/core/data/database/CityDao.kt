@@ -1,5 +1,6 @@
 package com.themarto.core.data.database
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -21,7 +22,7 @@ interface CityDao {
         ORDER BY name, country
     """
     )
-    fun getFiltered(namePrefix: String, onlyFavs: Boolean = false): Flow<List<DBCity>>
+    fun getFiltered(namePrefix: String, onlyFavs: Boolean = false): PagingSource<Int, DBCity>
 
     @Query("UPDATE cities SET favorite = CASE favorite WHEN 1 THEN 0 ELSE 1 END WHERE id = :id")
     suspend fun toggleFavourite(id: String)

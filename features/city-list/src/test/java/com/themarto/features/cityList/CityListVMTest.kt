@@ -1,13 +1,18 @@
 package com.themarto.features.cityList
 
+import androidx.paging.LoadState
+import androidx.paging.LoadStates
+import androidx.paging.PagingData
+import androidx.paging.PagingDataEvent
+import androidx.paging.PagingDataPresenter
+import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
-import com.themarto.core.data.repository.CityRepository
 import com.themarto.core.data.utils.Result
 import com.themarto.core.domain.City
-import com.themarto.core.domain.Coordinates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -20,7 +25,6 @@ import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.spy
-import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 
 @ExperimentalCoroutinesApi
@@ -39,28 +43,20 @@ class CityListVMTest {
     }
 
     @Test
-    fun `A0_WHEN ViewModel is initialized THEN cities are empty`() = runTest {
-        val vm = CityListViewModel(provideCityRepository())
-        vm.uiState.test {
-            assertEquals(emptyList<City>(), awaitItem().cities)
-            cancelAndIgnoreRemainingEvents()
-        }
-
-    }
-
-    @Test
     fun `B0_WHEN cities are retrieved THEN they are displayed`() = runTest {
         val vm = CityListViewModel(provideCityRepository())
         vm.uiState.test {
-            awaitItem() // initial emit
-            assertEquals(provideCityList(), awaitItem().cities)
+            val cityList = awaitItem().cities?.asSnapshot {
+                scrollTo(50)
+            }
+            assertEquals(provideCityList(), cityList)
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
     fun `B1_WHEN getCitiesFiltered respond error THEN display error`() = runTest {
-        val citiesFilteredFlow = flow<Result<List<City>>> { emit(Result.Error("error")) }
+        val citiesFilteredFlow = flowOf<Result<PagingData<City>>>(Result.Error("error"))
         val viewModel = CityListViewModel(
             provideCityRepository(
                 getCitiesFiltered = citiesFilteredFlow
@@ -68,27 +64,86 @@ class CityListVMTest {
         )
 
         viewModel.uiState.test {
-            awaitItem() // initial emit
-            assertEquals("error", awaitItem().error)
+            awaitItem().let { uiState ->
+                uiState.cities?.first() // observe to trigger response
+                assertEquals("error", awaitItem().error)
+            }
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
-    fun `B2_WHEN getCitiesFiltered has not responded THEN loading is true`() = runTest {
-        val vm = CityListViewModel(provideCityRepository())
+    fun `B2_WHEN PagingData is loading THEN append state is Loading`() = runTest {
+        val vm = CityListViewModel(
+            provideCityRepository(
+                getCitiesFiltered = flowOf (
+                    Result.Success(
+                        PagingData.from(
+                            data = provideCityList(),
+                            sourceLoadStates = LoadStates(
+                                refresh = LoadState.NotLoading(true),
+                                prepend = LoadState.NotLoading(true),
+                                append = LoadState.Loading // paging data loading
+                            )
+                        )
+                    )
+                )
+            )
+        )
+        val pagingDataPresenter = object : PagingDataPresenter<City>() {
+            override suspend fun presentPagingDataEvent(event: PagingDataEvent<City>) { }
+
+        }
         vm.uiState.test {
-            assertEquals(true, awaitItem().loading)
+            // start observing cities flow
+            awaitItem().cities?.test {
+                awaitItem().let { pagingDataPresenter.collectFrom(it) }
+                cancelAndIgnoreRemainingEvents()
+            }
+
+            pagingDataPresenter.loadStateFlow.test {
+                // assert that append state is loading
+                assert(awaitItem()?.append is LoadState.Loading)
+                cancelAndIgnoreRemainingEvents()
+            }
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
-    fun `B3_WHEN getCitiesFiltered has responded THEN loading is false`() = runTest {
-        val vm = CityListViewModel(provideCityRepository())
+    fun `B3_WHEN Paging Data is not loading THEN append is NotLoading`() = runTest {
+        val vm = CityListViewModel(
+            provideCityRepository(
+                getCitiesFiltered = flowOf (
+                    Result.Success(
+                        PagingData.from(
+                            data = provideCityList(),
+                            sourceLoadStates = LoadStates(
+                                refresh = LoadState.NotLoading(true),
+                                prepend = LoadState.NotLoading(true),
+                                append = LoadState.NotLoading(true)
+                            )
+                        )
+                    )
+                )
+            )
+        )
+        val pagingDataPresenter = object : PagingDataPresenter<City>() {
+            override suspend fun presentPagingDataEvent(event: PagingDataEvent<City>) { }
+
+        }
         vm.uiState.test {
-            awaitItem() // initial emit
-            assertEquals(false, awaitItem().loading)
+            // start observing cities flow
+            awaitItem().cities?.test {
+                awaitItem().let { pagingDataPresenter.collectFrom(it) }
+                cancelAndIgnoreRemainingEvents()
+            }
+
+            pagingDataPresenter.loadStateFlow.test {
+                // assert that append state is not loading
+                assert(awaitItem()?.append is LoadState.NotLoading)
+                cancelAndIgnoreRemainingEvents()
+            }
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -98,11 +153,18 @@ class CityListVMTest {
         val cityRepoMock = spy(provideCityRepository())
         val vm = CityListViewModel(cityRepoMock)
 
-        vm.onQueryChanged("prefix")
+        vm.uiState.test {
+            awaitItem().cities?.test {
+                awaitItem() // initial emit
+                vm.onQueryChanged("prefix")
+                advanceUntilIdle()
 
-        advanceUntilIdle()
+                verify(cityRepoMock).getCitiesFiltered("prefix")
+                cancelAndIgnoreRemainingEvents()
+            }
+            cancelAndIgnoreRemainingEvents()
+        }
 
-        verify(cityRepoMock).getCitiesFiltered("prefix")
     }
 
     @Test
@@ -153,11 +215,17 @@ class CityListVMTest {
        val repo = spy(provideCityRepository())
        val vm = CityListViewModel(repo)
 
-       vm.onFilterFavClick()
-       advanceUntilIdle()
+       vm.uiState.test {
+           awaitItem().cities?.test {
+               awaitItem() // initial emit
+               vm.onFilterFavClick()
+               advanceUntilIdle()
 
-       verify(repo).getCitiesFiltered(any(), eq(true))
-
+               verify(repo).getCitiesFiltered(any(), eq(true))
+               cancelAndIgnoreRemainingEvents()
+           }
+           cancelAndIgnoreRemainingEvents()
+       }
    }
 
 }

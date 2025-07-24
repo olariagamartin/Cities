@@ -42,6 +42,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.themarto.core.domain.City
 import com.themarto.core.domain.Coordinates
@@ -92,9 +94,10 @@ private fun CityListWithMap(
     onInfoClick: (String) -> Unit = { },
     selectedId: String?,
 ) {
-    val selectedCity = remember(selectedId) {
+    // todo: check again
+    /*val selectedCity = remember(selectedId) {
         uiState.cities.find { it.id == selectedId }
-    }
+    }*/
     Row {
         Column(
             modifier = Modifier.weight(1f)
@@ -113,7 +116,7 @@ private fun CityListWithMap(
             modifier = Modifier.weight(1f)
         ) {
             MapContainer(
-                coordinates = selectedCity?.coordinates
+                coordinates = null
             )
         }
     }
@@ -129,6 +132,7 @@ fun CitiesScreenContent(
     onInfoClick: (String) -> Unit = { },
     selectedId: String? = null
 ) {
+    val cities = uiState.cities?.collectAsLazyPagingItems()
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -139,14 +143,7 @@ fun CitiesScreenContent(
                 onFilterFavs = onFilterFavs,
                 filterFavs = uiState.filterFav
             )
-            if (uiState.loading) {
-                Box(
-                    Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            } else if (uiState.cities.isEmpty()) {
+            if (cities == null || cities.itemCount == 0 && cities.loadState.isIdle) {
                 Box(
                     Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -156,7 +153,7 @@ fun CitiesScreenContent(
             }
             else {
                 CityList(
-                    uiState = uiState,
+                    cities = cities,
                     onFavClick = onFavClick,
                     onCityClick = onCityClick,
                     onInfoClick = onInfoClick,
@@ -206,7 +203,7 @@ fun CityFilterBar(
 
 @Composable
 fun CityList(
-    uiState: CityListUIState,
+    cities: LazyPagingItems<City>,
     onFavClick: (String) -> Unit = { },
     onCityClick: (String) -> Unit = { },
     onInfoClick: (String) -> Unit = { },
@@ -216,17 +213,19 @@ fun CityList(
         modifier = Modifier.fillMaxWidth()
     ) {
         LazyColumn(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
         ) {
-            items(uiState.cities) { city ->
+            items(cities.itemCount) { index ->
                 Column {
-                    CityItem(
-                        city = city,
-                        onFavClick = { onFavClick(city.id) },
-                        onClick = { onCityClick(city.id) },
-                        onInfoClick = { onInfoClick(city.id) },
-                        isSelected = city.id == selectedId
-                    )
+                    cities[index]?.let {
+                        CityItem(
+                            city = it,
+                            onFavClick = { onFavClick(it.id) },
+                            onClick = { onCityClick(it.id) },
+                            onInfoClick = { onInfoClick(it.id) },
+                            isSelected = it.id == selectedId
+                        )
+                    }
                     HorizontalDivider()
                 }
 
@@ -320,6 +319,8 @@ private fun IndexFilterBarPreview() {
     )
 }
 
+// todo: check
+/*
 @Preview
 @Composable
 private fun CityListPreview() {
@@ -349,4 +350,4 @@ private fun CityScreenPreview() {
             )
         ),
     )
-}
+}*/

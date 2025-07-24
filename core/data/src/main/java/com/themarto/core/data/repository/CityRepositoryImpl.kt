@@ -1,6 +1,10 @@
 package com.themarto.core.data.repository
 
 import android.util.Log
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.themarto.core.data.database.CityDao
 import com.themarto.core.data.network.CityNetworkApi
 import com.themarto.core.data.utils.Result
@@ -19,13 +23,20 @@ class CityRepositoryImpl(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : CityRepository {
 
-    override fun getCitiesFiltered(prefix: String, filterFav: Boolean): Flow<Result<List<City>>> =
+    override fun getCitiesFiltered(prefix: String, filterFav: Boolean): Flow<Result<PagingData<City>>> =
         flow {
             populateDBIfEmpty()
-            cityDao.getFiltered(prefix, filterFav)
-                .map { cityListDb ->
+            Pager(
+                config = PagingConfig(
+                    pageSize = 30,
+                ),
+                pagingSourceFactory = {
+                    Log.d("CityRepository", "Fetching cities from DB")
+                    cityDao.getFiltered(prefix, filterFav)
+                }
+            ).flow.map { cityDb ->
                     Result.Success(
-                        cityListDb.map { it.toDomain() }
+                        cityDb.map { it.toDomain() }
                     )
                 }.let { emitAll(it) }
         }.flowOn(ioDispatcher)

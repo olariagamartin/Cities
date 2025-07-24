@@ -69,4 +69,8 @@ dependencies {
     testImplementation(libs.turbine)
     testImplementation(libs.mockito)
 
+    // paging
+    implementation(libs.paging.compose)
+    testImplementation(libs.androidx.paging.testing)
+
 }

@@ -50,4 +50,8 @@ dependencies {
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
 
+    // paging
+    api(libs.androidx.paging.runtime)
+    implementation(libs.androidx.room.paging)
+
 }
