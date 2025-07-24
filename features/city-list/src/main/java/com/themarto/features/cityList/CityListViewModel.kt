@@ -42,19 +42,19 @@ class CityListViewModel(
     }
 
     private val citiesFlow: Flow<PagingData<City>> = cityListResponse.flatMapLatest { result ->
-        if (result.isSuccess()) {
-            flow<PagingData<City>> {
-                emit(result.data)
+        val pagingData = when(result) {
+            is Result.Success -> {
+                result.data
             }
-        } else {
-            _uiState.update {
-                it.copy(
-                    error = (result as Result.Error).error
-                )
+            is Result.Error -> {
+                _uiState.update {
+                    it.copy(error = result.error)
+                }
+                PagingData.empty()
             }
-            flow<PagingData<City>> {
-                emit(PagingData.empty())
-            }
+        }
+        flow {
+            emit(pagingData)
         }
     }.cachedIn(viewModelScope)
 
