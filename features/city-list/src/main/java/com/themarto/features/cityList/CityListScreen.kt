@@ -11,14 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,10 +26,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -60,17 +54,15 @@ fun CitiesScreen(
     val config = LocalConfiguration.current
     val isLandscape = config.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-    var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
-
     if (isLandscape) {
         CityListWithMap(
             uiState = uiState,
             onQueryChange = viewModel::onQueryChanged,
             onFavClick = viewModel::onFavClick,
             onFilterFavs = viewModel::onFilterFavClick,
-            onCityClick = { cityId -> selectedId = cityId },
+            onCityClick = { viewModel.selectCity(it) },
             onInfoClick = navigateToCityDetails,
-            selectedId = selectedId
+            selectedCity = uiState.selectedCity
         )
     } else {
         CitiesScreenContent(
@@ -78,7 +70,7 @@ fun CitiesScreen(
             onQueryChange = viewModel::onQueryChanged,
             onFavClick = viewModel::onFavClick,
             onFilterFavs = viewModel::onFilterFavClick,
-            onCityClick = navigateToCityMap,
+            onCityClick = { navigateToCityMap(it.id) },
             onInfoClick = navigateToCityDetails,
         )
     }
@@ -90,14 +82,10 @@ private fun CityListWithMap(
     onQueryChange: (String) -> Unit = {},
     onFavClick: (String) -> Unit = { },
     onFilterFavs: () -> Unit = { },
-    onCityClick: (String) -> Unit = { },
+    onCityClick: (City) -> Unit = { },
     onInfoClick: (String) -> Unit = { },
-    selectedId: String?,
+    selectedCity: City? = null
 ) {
-    // todo: check again
-    /*val selectedCity = remember(selectedId) {
-        uiState.cities.find { it.id == selectedId }
-    }*/
     Row {
         Column(
             modifier = Modifier.weight(1f)
@@ -109,14 +97,14 @@ private fun CityListWithMap(
                 onFilterFavs = onFilterFavs,
                 onCityClick = onCityClick,
                 onInfoClick = onInfoClick,
-                selectedId = selectedId
+                selectedId = selectedCity?.id
             )
         }
         Column(
             modifier = Modifier.weight(1f)
         ) {
             MapContainer(
-                coordinates = null
+                coordinates = selectedCity?.coordinates
             )
         }
     }
@@ -128,7 +116,7 @@ fun CitiesScreenContent(
     onQueryChange: (String) -> Unit = {},
     onFavClick: (String) -> Unit = { },
     onFilterFavs: () -> Unit = { },
-    onCityClick: (String) -> Unit = { },
+    onCityClick: (City) -> Unit = { },
     onInfoClick: (String) -> Unit = { },
     selectedId: String? = null
 ) {
@@ -205,7 +193,7 @@ fun CityFilterBar(
 fun CityList(
     cities: LazyPagingItems<City>,
     onFavClick: (String) -> Unit = { },
-    onCityClick: (String) -> Unit = { },
+    onCityClick: (City) -> Unit = { },
     onInfoClick: (String) -> Unit = { },
     selectedId: String? = null
 ) {
@@ -221,7 +209,7 @@ fun CityList(
                         CityItem(
                             city = it,
                             onFavClick = { onFavClick(it.id) },
-                            onClick = { onCityClick(it.id) },
+                            onClick = { onCityClick(it) },
                             onInfoClick = { onInfoClick(it.id) },
                             isSelected = it.id == selectedId
                         )

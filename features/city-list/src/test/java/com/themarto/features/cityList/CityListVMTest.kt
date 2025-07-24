@@ -228,4 +228,25 @@ class CityListVMTest {
        }
    }
 
+    @Test
+    fun `F0_WHEN is initialized THEN selectedCity is null`() = runTest {
+        val vm = CityListViewModel(provideCityRepository())
+        vm.uiState.test {
+            assertEquals(null, awaitItem().selectedCity)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `F1_WHEN selectCity is called THEN selectedCity is updated`() = runTest {
+        val vm = CityListViewModel(provideCityRepository())
+        val city = provideCityList().first()
+        vm.uiState.test {
+            awaitItem() // initial emit
+            vm.selectCity(city)
+            assertEquals(city, awaitItem().selectedCity)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
 }

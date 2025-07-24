@@ -24,6 +24,7 @@ data class CityListUIState(
     val error: String? = null,
     val query: String = "",
     val filterFav: Boolean = false,
+    val selectedCity: City? = null
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -94,6 +95,14 @@ class CityListViewModel(
             )
         }
         filterFav.value = !(filterFav.value)
+    }
+
+    fun selectCity(city: City) {
+        _uiState.update {
+            it.copy(
+                selectedCity = city
+            )
+        }
     }
 
 }
