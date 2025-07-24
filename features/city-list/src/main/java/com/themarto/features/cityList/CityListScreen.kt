@@ -36,11 +36,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.themarto.core.domain.City
 import com.themarto.core.domain.Coordinates
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -329,3 +332,13 @@ private fun CityScreenPreview() {
         )
     )
 }
+
+private val citiesFakeData = listOf(
+    City("id", "Name", "CT", Coordinates(1.0, 2.0), true),
+    City("id", "Name", "CT", Coordinates(1.0, 2.0), false),
+    City("id", "Name", "CT", Coordinates(1.0, 2.0), true),
+    City("id", "Name", "CT", Coordinates(1.0, 2.0), false),
+)
+
+fun previewPagingFlow(): Flow<PagingData<City>> =
+    flowOf(PagingData.from(citiesFakeData))
