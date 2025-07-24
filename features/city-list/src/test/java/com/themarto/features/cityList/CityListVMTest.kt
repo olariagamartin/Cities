@@ -43,6 +43,25 @@ class CityListVMTest {
     }
 
     @Test
+    fun `A0_WHEN ViewModel is initialized THEN loading is true`() = runTest {
+        val vm = CityListViewModel(provideCityRepository())
+        vm.uiState.test {
+            assertEquals(true, awaitItem().loading)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `A1_WHEN cities are retrieved THEN loading is false`() = runTest {
+        val vm = CityListViewModel(provideCityRepository())
+        vm.uiState.test {
+            awaitItem().cities?.first() // observe to trigger response
+            assertEquals(false, awaitItem().loading)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `B0_WHEN cities are retrieved THEN they are displayed`() = runTest {
         val vm = CityListViewModel(provideCityRepository())
         vm.uiState.test {

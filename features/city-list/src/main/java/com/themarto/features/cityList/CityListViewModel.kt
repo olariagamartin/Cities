@@ -6,7 +6,6 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.themarto.core.data.repository.CityRepository
 import com.themarto.core.data.utils.Result
-import com.themarto.core.data.utils.isSuccess
 import com.themarto.core.domain.City
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +23,8 @@ data class CityListUIState(
     val error: String? = null,
     val query: String = "",
     val filterFav: Boolean = false,
-    val selectedCity: City? = null
+    val selectedCity: City? = null,
+    val loading: Boolean = false
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -44,6 +44,9 @@ class CityListViewModel(
     private val citiesFlow: Flow<PagingData<City>> = cityListResponse.flatMapLatest { result ->
         val pagingData = when(result) {
             is Result.Success -> {
+                _uiState.update {
+                    it.copy(loading = false)
+                }
                 result.data
             }
             is Result.Error -> {
@@ -68,7 +71,8 @@ class CityListViewModel(
     private fun loadCities() {
         _uiState.update {
             it.copy(
-                cities = citiesFlow
+                cities = citiesFlow,
+                loading = true
             )
         }
     }
