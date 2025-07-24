@@ -64,15 +64,6 @@ On bigger project, some composables could be extracted to a module to be reusabl
 ### (Extra) Paging 3 — The Learning Curve
 This was the hardest piece since I had to learn how to use it and test it in order to handle 200 K items smoothly when filtering.
 
-## 🏁 Getting Started
-
-1. Clone the repo and open in Android Studio
-2. Add your keys to `local.properties`:
-```
-googleMapsApiKey=YOUR_GOOGLE_MAPS_KEY
-```
-3. Sync Gradle, then run the app
-
 ## 📽️ Screenshots
 
 |City List|City List Search|City List Favs|
@@ -82,6 +73,16 @@ googleMapsApiKey=YOUR_GOOGLE_MAPS_KEY
 |City Map|City Detail|City List Landscape|
 |---|---|---|
 |![](screenshots/city_map.png)|![](screenshots/city_detail.png)|![](screenshots/city_list_landscape.png)|
+
+## 🏁 Getting Started
+
+1. Clone the repo and open in Android Studio
+2. Add your keys to `local.properties`:
+```
+googleMapsApiKey=YOUR_GOOGLE_MAPS_KEY
+```
+3. Sync Gradle, then run the app
+
 <br>
 
 -----
