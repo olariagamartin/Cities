@@ -45,37 +45,56 @@ private fun CityDetailsScreenContent(
     uiState: UiState,
 ) {
     Column {
-        CenterAlignedTopAppBar(
-            modifier = Modifier,
-            title = {
-                Text(
-                    text = "Details"
-                )
-            },
-            navigationIcon = {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null
-                    )
-                }
-            },
-            actions = {
-                IconButton(onClick = onFavoriteClick) {
-                    Icon(
-                        imageVector = if (uiState.city?.isFavorite == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = null
-                    )
-                }
-            }
+        DetailsTopAppBar(
+            onBackClick = onBackClick,
+            onFavoriteClick = onFavoriteClick,
+            uiState = uiState
         )
-        Surface(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Text("City Data")
-        }
+        DetailsContent()
     }
 
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun DetailsTopAppBar(
+    onBackClick: () -> Unit,
+    onFavoriteClick: () -> Unit,
+    uiState: UiState,
+) {
+    CenterAlignedTopAppBar(
+        modifier = Modifier,
+        title = {
+            Text(
+                text = "Details"
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = null
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = onFavoriteClick) {
+                Icon(
+                    imageVector = if (uiState.city?.isFavorite == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = null
+                )
+            }
+        }
+    )
+}
+
+@Composable
+private fun DetailsContent() {
+    Surface(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Text("City Data")
+    }
 }
 
 @Preview
