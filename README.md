@@ -3,7 +3,7 @@
 <br></br>
 <h1>Cities Search App (Android)</h1> 
 <p>Android challenge solution for searching, favoriting, and exploring cities.</p> 
-<a href="https://drive.google.com/file/d/17-sBxo48FReo_HAjdGBFxwQe8Or6zcUj/view?usp=sharing">Download the app from Drive</a>
+<a href="https://drive.google.com/file/d/1_beIMIpZLhoxWJCd1R7eanBGxH5czz0X/view?usp=sharing">Download a debuggable version from Drive</a>
 </div>
 
 
